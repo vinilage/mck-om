@@ -71,6 +71,11 @@ Run the following command in the ``rep-set`` folder to start deploying the repli
 make deploy
 ```
 
+To troubleshoot evuentual IP issues, run the following command
+```
+kubectl describe mdb replica-set -n mongodb-operator 
+```
+
 ### Connect to the replica set (from the pod)
 
 To connect to the replica set from inside the cluster, run the following command
