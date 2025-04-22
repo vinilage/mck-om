@@ -51,6 +51,12 @@ After all, to deploy Ops Manager, run the following command
 make deploy
 ```
 
+To generate the Ops Manager URL, run the following command
+```
+URL=http://$(kubectl -n mongodb-operator get svc ops-manager-svc-ext -o jsonpath='{.status.loadBalancer.ingress[0].ip}:{.spec.ports[0].port}')
+echo $URL
+```
+
 ## Deploy a replica set
 
 First step is to generate the API Key through Ops Manager. To do so, go to ops-manager-db Organization > Access Managaer > Create API Key (as an Org Owner). Do not forget to add your IP address to the API access list. 
@@ -64,6 +70,21 @@ Run the following command in the ``rep-set`` folder to start deploying the repli
 ```
 make deploy
 ```
+
+To connect to the replica set from inside the cluster, run the following command
+```
+kubectl run -i --tty mongo-client --rm \
+  --image=mongo \
+  --restart=Never \
+  -- bash
+```
+
+Inside the pod, you will run this following command
+```
+mongosh --host replica-set-0.replica-set-svc.mongodb-operator.svc.cluster.local --port 27017
+```
+
+Note: you can also find a way to connect by using this [link](https://www.mongodb.com/docs/ops-manager/v8.0/tutorial/connect-to-mongodb/)
 
 ## References
 
