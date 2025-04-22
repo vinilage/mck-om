@@ -1,0 +1,88 @@
+{
+  "connectionString": "mongodb://localhost:27017",
+  "reportInterval": 1000,
+  "http": {
+    "enabled": false,
+    "port": 3000,
+    "host": "localhost"
+  },
+  "mongoReporter": {
+    "enabled": false,
+    "connectionString": "mongodb://localhost:27017",
+    "database": "simrunner",
+    "collection": "report",
+    "drop": false,
+    "runtimeSuffix": false
+  },
+  "templates": [
+    {
+      "name": "claims",
+      "database": "insurance",
+      "collection": "claims",
+      "drop": true,
+      "template": {
+        "first": "%name.firstName",
+        "last": "%name.lastName",
+        "customerId": {
+          "%abs": {
+            "of": {
+              "%gaussian": {
+                "mean": 50000,
+                "sd": 10000
+              }
+            }
+          }
+        },
+        "claim": {
+          "date": {
+            "%date": {
+              "min": { "$date": "2000-01-01" },
+              "max": { "$date": "2022-01-01" }
+            }
+          },
+          "type": "#claimType",
+          "amount": { "%natural": { "max": 100000 } },
+          "currency": "#currency"
+        },
+        "suspectedFraud": "#isFraud",
+        "...": ""
+      },
+      "remember": ["customerId"],
+      "indexes": [
+        {
+          "claim.date": 1,
+          "customerId": 1
+        }
+      ]
+    }
+  ],
+  "workloads": [
+    {
+      "name": "50 latest claims",
+      "template": "claims",
+      "op": "find",
+      "params": {
+        "filter": {},
+        "sort": { "claim.date": -1 },
+        "limit": 50
+      },
+      "threads": 2,
+      "pace": 50,
+      "comment": "Simulate 2 users fetching the latest 50 claims 20 times per second"
+    },
+    {
+      "name": "Latest claims per customer",
+      "template": "claims",
+      "op": "find",
+      "params": {
+        "filter": { "customerId": "#customerId" },
+        "sort": { "claim.date": -1 },
+        "limit": 50
+      },
+      "threads": 1,
+      "pace": 1000,
+      "comment": "Simulate 1 user fetching the claims for a specific customer, once per second"
+    }
+  ]
+}
+

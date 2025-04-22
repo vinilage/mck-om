@@ -108,6 +108,25 @@ mongosh --host localhost --port 27017
 
 Verify the connection using ``rs.status()``
 
+## (Optional) Profiler data in the replica set 
+
+This script will generate 1M documents. It will apply a mix of indexes and poorly queries to generae some metrics and recommendations on the [query profiler](https://www.mongodb.com/docs/atlas/tutorial/query-profiler/) and [performance advisor](https://www.mongodb.com/docs/ops-manager/current/reference/api/performance-advisor/).
+
+To run the script, run the following command on the ``/profiler`` folder
+```
+docker run --network host --mount type=bind,source="$(pwd)/config.json",target=/config.json sylvainchambon/simrunner:latest
+```
+
+Note: the port-forwarding needs to be enabled before running the command 
+
+
 ## References
 
 [MonoDB Enterprise Kubernetes Operator](https://www.mongodb.com/docs/kubernetes-operator/current/)
+[SimRunner](https://github.com/schambon/SimRunner)
+
+## Next steps 
+
+- Enable TLS Certificate
+- Support for sharding cluster
+- Support for multi-cluster deployments
