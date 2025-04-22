@@ -1,0 +1,23 @@
+apiVersion: mongodb.com/v1
+kind: MongoDBOpsManager
+metadata:
+  name: ops-manager
+  namespace: mongodb-operator
+spec:
+  version: "ops-manager-version"
+  adminCredentials: om-admin-secret
+  externalConnectivity:
+    type: LoadBalancer
+  configuration:
+    mms.ignoreInitialUiSetup: "true"
+    automation.versions.source: mongodb
+    mms.adminEmailAddr: support@example.com
+    mms.fromEmailAddr: support@example.com
+    mms.replyToEmailAddr: support@example.com
+    mms.mail.hostname: example.com
+    mms.mail.port: "465"
+    mms.mail.ssl: "false"
+    mms.mail.transport: smtp
+  applicationDatabase:
+    members: 3
+    version: "appdb-version"
