@@ -4,6 +4,8 @@
 
 This repository shows how to deploy MongoDb Ops Manager and a replica set cluster on a GKE cluster using the MongoDB Enterprise Kubernetes Operator.
 
+![Alt text](/images/mongodb-operator-img.png)
+
 ## Prerequisities
 
 ## Setup Infrastructure
@@ -55,6 +57,8 @@ First step is to generate the API Key through Ops Manager. To do so, go to ops-m
 
 Complete the ``rep-set/secret.yaml`` then the ``rep-set/config-map.yaml`` to prepare the deployment of the replica set. 
 Note: if you can't get the information, you can have the YAML files using the Kubernetes Setup on the organization settings.
+
+![Alt text](/images/kubernetes-setup.png)
 
 Run the following command in the ``rep-set`` folder to start deploying the replica-set under a new project.
 ```
