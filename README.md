@@ -71,6 +71,8 @@ Run the following command in the ``rep-set`` folder to start deploying the repli
 make deploy
 ```
 
+### Connect to the replica set (from the pod)
+
 To connect to the replica set from inside the cluster, run the following command
 ```
 kubectl run -i --tty mongo-client --rm \
@@ -85,6 +87,21 @@ mongosh --host replica-set-0.replica-set-svc.mongodb-operator.svc.cluster.local 
 ```
 
 Note: you can also find a way to connect by using this [link](https://www.mongodb.com/docs/ops-manager/v8.0/tutorial/connect-to-mongodb/)
+
+### Connect to the replica set (using port-forward)
+
+To forward a port from the MongoDB replica set to you local machine, run the following command
+```
+kubectl port-forward pod/replica-set-0 27017:27017 -n mongodb-operator
+
+```
+
+Once it is set,up, connect to MongoDB using this command 
+```
+mongosh --host localhost --port 27017
+```
+
+Verify the connection using ``rs.status()``
 
 ## References
 
