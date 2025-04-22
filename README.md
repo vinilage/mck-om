@@ -122,8 +122,8 @@ Note: the port-forwarding needs to be enabled before running the command
 
 ## References
 
-[MonoDB Enterprise Kubernetes Operator](https://www.mongodb.com/docs/kubernetes-operator/current/)
-[SimRunner](https://github.com/schambon/SimRunner)
+- [MonoDB Enterprise Kubernetes Operator](https://www.mongodb.com/docs/kubernetes-operator/current/)
+- [SimRunner](https://github.com/schambon/SimRunner)
 
 ## Next steps 
 
