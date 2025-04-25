@@ -108,6 +108,102 @@ mongosh --host localhost --port 27017
 
 Verify the connection using ``rs.status()``
 
+## Deploy a Replica Set with TLS enabled and available external to K8s
+
+Before deploying the replica set you need to configure TLS, creating the OpenSSL certificate.
+
+For this, you'll need to provision a public domain and subdomain to be used to access the cluster from the internet.
+
+For example, I created the domain ``mongokube.com`` and 3 different subdomains, associated with each node of the replica set, considering the format ``{resourceName}-{podIndex}-repl.mongokube.com``
+
+```
+replica-set-tls-0-repl.mongokube.com
+replica-set-tls-1-repl.mongokube.com
+replica-set-tls-2-repl.mongokube.com
+```
+
+Those subdomains, together with the internal POD's addresses, will be used to create the TLS certificates.
+
+The POD's internal address will have the following format: ``<pod-name>.<metadata.name>-svc.<namespace>.svc.cluster.local``. In my example, the internal DNS of the nodes will be as follows:
+
+```
+replica-set-tls-0.replica-set-tls-svc.mongodb-operator.svc.cluster.local
+replica-set-tls-1.replica-set-tls-svc.mongodb-operator.svc.cluster.local
+replica-set-tls-2.replica-set-tls-svc.mongodb-operator.svc.cluster.local
+```
+
+With them in hand, we need to configure our ``san.cnf`` file in order to create the OpenSSL certificates. You'll need to change the DNS SANs (Subject Alternative Name) with the ones associated with your external and internal domains.
+
+Once configured, run the following command to generate the certificates:
+```
+$ openssl req -x509 -nodes -days 365 \
+  -newkey rsa:2048 \
+  -keyout tls.key -out tls.crt \
+  -config san.cnf \
+  -extensions req_ext
+```
+
+Convert both certificates to the ``.pem`` format with the ``cp`` command, than run the following command to issue the client certificate and key
+
+```
+$ cat tls.crt tls.key > client.pem
+```
+
+Now, we need to add the TLS certificates to our K8s namespace. First, set the default namespace of your kubectl to the one of your clusters with the command below.
+
+```
+$ kubectl config set-context $(kubectl config current-context) --namespace=<metadata.namespace>
+```
+
+Each certificate name must have a prefix, which will be used to configure the Replica Set cluster.
+
+For example, if you call your deployment ``replica-set-tls`` and you set the prefix to ``mdb``, you must name the TLS secret for the client TLS communications ``mdb-replica-set-tls-cert``.
+
+To create the first secret, run the following command, changing the replica-set-tls cert and key to their filepath.
+
+```
+$ kubectl create secret tls <prefix>-<metadata.name>-cert \
+  --cert=<replica-set-tls-cert> \
+  --key=<replica-set-tls-key>
+```
+
+Do the same to the agent's TLS certificate
+
+```
+$ kubectl create secret tls <prefix>-<metadata.name>-agent-certs \
+  --cert=<agent-tls-cert> \
+  --key=<agent-tls-key>
+```
+
+Next create a Config Map with the Certificate Authority (CA) from the tls.crt file
+
+```
+kubectl create configmap custom-ca --from-file=ca-pem=<your-custom-ca-file>
+```
+
+Now, change the ``replica-set-tls.yaml`` file with the correct data in order to deploy the cluster. Once done, deploy the replica set with the following command:
+
+```
+$	kubectl apply -f replica-set-tls.yaml
+```
+
+When finished, you should have 3 new PODs running and 3 external Load Balancers with their respective IP addresses.
+
+To check this, you can run the commands below
+
+```
+$ kubectl get services
+$ kubectl get pod
+```
+
+By having the external IP addresses of the load balancers, you'll be able to configure the subdomains to point to this IPs.
+
+For example, you should configure the subdomain ``replica-set-tls-0-repl.mongokube.com`` to point a ``A`` entrance to the external load balancer IP associated to ``replica-set-tls-0`` POD.
+
+Before connecting to the cluster, you should create a database user using Ops Manager.
+
+Once this is done and the DNS has propagated, you should be able to connect to your Cluster using your external DNS in Compass. For this, when configuring the connection string, you'll need to set the 3 subdomains, your user and add the TLS certificates in the configuration.
+
 ## (Optional) Profiler data in the replica set 
 
 This script will generate 1M documents. It will apply a mix of indexes and poorly queries to generae some metrics and recommendations on the [query profiler](https://www.mongodb.com/docs/atlas/tutorial/query-profiler/) and [performance advisor](https://www.mongodb.com/docs/ops-manager/current/reference/api/performance-advisor/).

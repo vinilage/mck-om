@@ -6,7 +6,7 @@ metadata:
   namespace: mongodb-operator
 spec:
   members: 3
-  version: "8.0.0"
+  version: "8.0.8-ent"
   opsManager:
     configMapRef:
            # Must match metadata.name in ConfigMap file

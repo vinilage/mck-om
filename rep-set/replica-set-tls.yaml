@@ -1,0 +1,44 @@
+---
+apiVersion: mongodb.com/v1
+kind: MongoDB
+metadata:
+  name: replica-set-tls
+  namespace: mongodb-operator
+spec:
+  members: 3
+  version: "8.0.8-ent"
+  opsManager:
+    configMapRef:
+           # Must match metadata.name in ConfigMap file
+      name: my-project
+  credentials: organization-secret
+  type: ReplicaSet
+  persistent: true
+  externalAccess:
+    externalService:
+      annotations:
+          external-dns.alpha.kubernetes.io/hostname: '{resourceName}-{podIndex}-repl.mongokube.com'
+      spec:
+        name: replica-set-loadbalancer
+        type: LoadBalancer
+        port: 27017
+        publishNotReadyAddress: true
+
+  connectivity:
+    replicaSetHorizons:
+      # So that clients outside the K8S cluster can access the cluster
+      # Must match externalService.annotations.external-dns.alpha.kubernetes.io/hostname
+      # Must have the same number of entries as the number of members in the replica set
+      # All entries must have the same name
+      # DNS names must be resolvable from the outside
+      # The DNS entries must be the same used to create the TLS certificates
+      - "external-horizon": "replica-set-tls-0-repl.mongokube.com:27017"
+      - "external-horizon": "replica-set-tls-1-repl.mongokube.com:27017"
+      - "external-horizon": "replica-set-tls-2-repl.mongokube.com:27017"
+  security:
+    certsSecretPrefix: mdb
+    tls:
+      enabled: true
+      # Config Map that contains the CA certificate
+      # that is used to sign the TLS certificates
+      ca: custom-ca
