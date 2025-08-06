@@ -1,6 +1,6 @@
-.PHONY: deploy
+.PHONY: deploy-om
 
-deploy:
+deploy-om:
 	kubectl apply -f secret.yaml
 	kubectl apply -f deploy.yaml
 

@@ -4,7 +4,7 @@ metadata:
   name: ops-manager
   namespace: mongodb-operator
 spec:
-  version: "ops-manager-version"
+  version: "8.0.7"
   adminCredentials: om-admin-secret
   externalConnectivity:
     type: LoadBalancer
@@ -12,7 +12,7 @@ spec:
     mms.ignoreInitialUiSetup: "true"
     automation.versions.source: mongodb
     mms.adminEmailAddr: support@example.com
-    mms.fromEmailAddr: support@example.com
+    mms.fromEmailAddr: support@example.comx
     mms.replyToEmailAddr: support@example.com
     mms.mail.hostname: example.com
     mms.mail.port: "465"
@@ -20,4 +20,4 @@ spec:
     mms.mail.transport: smtp
   applicationDatabase:
     members: 3
-    version: "appdb-version"
+    version: "8.0.7"
