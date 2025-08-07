@@ -1,26 +1,11 @@
-
-### Build the image:
-
-# VERSION="8.0.7"
-# OM_DOWNLOAD_URL="https://downloads.mongodb.com/on-prem-mms/tar/mongodb-mms-8.0.7.500.20250505T1426Z.tar.gz"
-# docker buildx build --load --progress plain . -f docker/mongodb-enterprise-ops-manager/Dockerfile -t "mongodb-enterprise-ops-manager:${VERSION}" \
-#  --build-arg version="${VERSION}" \
-#  --build-arg om_download_url="${OM_DOWNLOAD_URL}"
-
-### Obs:
-# The OM we downloead (.gz) has a /jdk directory
-# we may need to update this to use the proper ARM one
-# as it is Karl's one: 
-#  https://github.com/karl-denby/mongo-infra-docker/blob/main/ops-manager/build/Dockerfile-aarch64-rhel8-om
-
 # Build compilable stuff
 
 FROM public.ecr.aws/docker/library/golang:1.24 AS readiness_builder
 COPY . /go/src/github.com/mongodb/mongodb-kubernetes
 WORKDIR /go/src/github.com/mongodb/mongodb-kubernetes
 
-RUN CGO_ENABLED=0 go build -a -buildvcs=false -o /data/scripts/mmsconfiguration ./mongodb-kubernetes-init-ops-manager/mmsconfiguration/edit_mms_configuration.go
-RUN CGO_ENABLED=0 go build -a -buildvcs=false -o /data/scripts/backup-daemon-readiness-probe ./mongodb-kubernetes-init-ops-manager/backupdaemon_readinessprobe/backupdaemon_readiness.go
+RUN CGO_ENABLED=0 go build -a -buildvcs=false -o /data/scripts/mmsconfiguration ./docker/mongodb-kubernetes-init-ops-manager/mmsconfiguration/edit_mms_configuration.go
+RUN CGO_ENABLED=0 go build -a -buildvcs=false -o /data/scripts/backup-daemon-readiness-probe ./docker/mongodb-kubernetes-init-ops-manager/backupdaemon_readinessprobe/backupdaemon_readiness.go
 
 # Move binaries and scripts
 FROM scratch AS base
@@ -30,9 +15,9 @@ COPY --from=readiness_builder /data/scripts/backup-daemon-readiness-probe /data/
 
 # After v2.0, when non-Static Agent images will be removed, please ensure to copy those files
 # into ./docker/mongodb-enterprise-ops-manager directory. Leaving it this way will make the maintenance easier.
-COPY ./mongodb-kubernetes-init-ops-manager/scripts/docker-entry-point.sh /data/scripts
-COPY ./mongodb-kubernetes-init-ops-manager/scripts/backup-daemon-liveness-probe.sh /data/scripts
-COPY ./mongodb-kubernetes-init-ops-manager/LICENSE /data/licenses/mongodb-enterprise-ops-manager
+COPY ./docker/mongodb-kubernetes-init-ops-manager/scripts/docker-entry-point.sh /data/scripts
+COPY ./docker/mongodb-kubernetes-init-ops-manager/scripts/backup-daemon-liveness-probe.sh /data/scripts
+COPY ./docker/mongodb-kubernetes-init-ops-manager/LICENSE /data/licenses/mongodb-enterprise-ops-manager
 
 FROM registry.access.redhat.com/ubi9/ubi-minimal
 
