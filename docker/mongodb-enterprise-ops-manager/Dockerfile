@@ -23,6 +23,7 @@ FROM registry.access.redhat.com/ubi9/ubi-minimal
 
 ARG version
 ARG om_download_url
+ARG jdk_arm_download_url
 
 LABEL name="MongoDB Enterprise Ops Manager" \
   maintainer="support@mongodb.com" \
@@ -70,10 +71,20 @@ RUN microdnf install --disableplugin=subscription-manager -y \
 COPY --from=base /data/licenses /licenses/
 COPY --from=base /data/scripts /opt/scripts
 
+# Download and extract Ops Manager
 RUN curl --fail -L -o ops_manager.tar.gz ${om_download_url} \
   && tar -xzf ops_manager.tar.gz \
   && rm ops_manager.tar.gz \
   && mv mongodb-mms* "${MMS_HOME}"
+
+# Download and extract ARM JDK
+RUN curl --fail -L -o jdk.tar.gz ${jdk_arm_download_url} \
+  && tar -xzf jdk.tar.gz \
+  && rm jdk.tar.gz
+
+# Remove current jdk folder and move the downloaded ARM one
+RUN rm -rf "${MMS_HOME}/jdk"
+RUN mv jdk* "${MMS_HOME}/jdk"
 
 # permissions
 RUN chmod -R 0777 "${MMS_LOG_DIR}" \
