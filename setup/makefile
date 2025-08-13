@@ -5,6 +5,7 @@
 create-kind-cluster:
 	@echo "Creating local Kind cluster: mongodb-mck-cluster..."
 	kind create cluster --name mongodb-mck-cluster
+	@echo "Setting the kubectl context to mongodb-mck-cluster..."
 	kubectl config use-context kind-mongodb-mck-cluster
 
 clean-up:
