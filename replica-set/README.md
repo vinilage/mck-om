@@ -6,7 +6,7 @@ Kubernetes cluster and MCK ready: [details here](https://github.com/vinilage/mck
 
 ## Deploying the replica set
 
-Run the following command in the ``./rep-set`` folder to start deploying the replica-set under a new project.
+Run the following command in the ``./replica-set`` folder to start deploying the replica-set under a new project.
 ```
 make deploy-rs
 ```
