@@ -44,7 +44,7 @@ To verify the installation you can run:
 Fill your credentials in the ``ops-manager/secret.yaml`` file.  
 Put the desired version of Ops Manager and Application Database (AppDB) in the ``ops-manager/deploy.yaml`` 
 
-Then run the following command from the ``./operator`` folder:
+Then run the following command from the ``./ops-manager`` folder:
 
 ```
 make deploy-om
