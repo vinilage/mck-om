@@ -110,7 +110,7 @@ The ``replica-set/secret.yaml`` and ``replica-set/config-map.yaml`` files needs 
 
 ## Other operations - WiP
 
-- [Deploy replica-set](https://github.com/vinilage/mck-om/replica-set/)
+- [Deploy replica-set](https://github.com/vinilage/mck-om/blob/main/replica-set/README.md)
 - Deploy sharded cluster
 - Deploy multi-cluster
 - Configure TLS
