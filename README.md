@@ -38,10 +38,7 @@ make install-mck
 ```
 
 This will install the latest version of the MCK operator via Helm.  
-To verify the installation you can run:
-- ``helm list --namespace mongodb-operator`` 
-- ``kubectl get pods -n mongodb-operator``
-- ``k9s -n mongodb-operator``
+To verify the installation you can run ``k9s -n mongodb-operator``
 
 ## Deploy Ops Manager
 
