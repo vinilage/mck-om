@@ -69,7 +69,7 @@ After around 15 minutes, if you run ``k9s -n mongodb-operator`` you must see:
 
 ## Accessing OpsManager via browser
 
-If you check all the Kubernetes services, by running ``kubectl get svc -n mongodb-operator`` you will find out that there is a LoadBalancer ``ops-manager-svc-ext`` with EXTERNAL-IP ``<pending>``. This LoadBalancer would provide external access to OpsManager, and we would be able to access it via browser. Unfortunately Kind does not support the primitive LoadBalancer, so we will use port forward to do so. OpsManager is available via ``ops-manager-db-svc`` service via port ``8080`` thus we will forward this. 
+If you check all the Kubernetes services, by running ``kubectl get svc -n mongodb-operator`` you will find out that there is a LoadBalancer ``ops-manager-svc-ext`` with EXTERNAL-IP ``<pending>``. This LoadBalancer would provide external access to OpsManager, and we would be able to access it via browser. For simplicitly, we will use port forward to do so. OpsManager is available via ``ops-manager-db-svc`` service via port ``8080`` thus we will forward this. 
 
 Run the following command, and leave it running:
 
