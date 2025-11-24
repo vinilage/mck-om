@@ -13,6 +13,10 @@ Feel free to clone this repo and to apply changes as you prefer.
 - [Kind](https://kind.sigs.k8s.io/) to create local Kubernetes clusters.
 - [K9s](https://k9scli.io/) to manage your local clusters (optional but recommended).
 
+### Recommendations
+- Docker resource allocation to avoid issues: `Docker -> Settings -> Resources`.  
+- Memory limit: 20GB
+- CPU limit: 10
 
 ## Setup a local Kind cluster
 
