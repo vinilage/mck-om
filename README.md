@@ -10,7 +10,7 @@ Feel free to clone this repo and to apply changes as you prefer.
 - [MongoDB Shell](https://www.mongodb.com/docs/mongodb-shell/) installed on your local machine.
 - [Docker](https://www.docker.com/) to manage your containers.
 - [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/) to run commands against Kubernetes clusters.
-- [Kind](https://kind.sigs.k8s.io/) to create local Kubernetes clusters.
+- [K3d](https://k3d.io/stable/) to create local Kubernetes clusters.
 - [K9s](https://k9scli.io/) to manage your local clusters (optional but recommended).
 
 ### Recommendations
@@ -18,15 +18,15 @@ Feel free to clone this repo and to apply changes as you prefer.
 - Memory limit: 20GB
 - CPU limit: 10
 
-## Setup a local Kind cluster
+## Setup a local K3d cluster
 
-To spin-up the local Kind cluster, run the makefile on the `./setup` folder using this command 
+To spin-up the local K3d cluster, run the following command 
 
 ```
-make create-kind-cluster
+k3d cluster create mongodb-mck-cluster
 ```
 This will create a ``mongodb-mck-cluster`` local cluster and it will set the context to it.  
-Verify the new cluster by running ``kubectl get nodes`` command.  
+Verify the new cluster by running ``kubectl get nodes`` command or with `k9s`.  
 
 
 ## Install the operator
