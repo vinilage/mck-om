@@ -6,10 +6,9 @@ metadata:
   namespace: mongodb-operator
 spec:
   members: 3
-  version: "8.0.2"
+  version: "8.2.0-ent"
   opsManager:
     configMapRef:
-           # Must match metadata.name in ConfigMap file
       name: my-project
   credentials: organization-secret
   type: ReplicaSet
