@@ -36,7 +36,7 @@ kubectl port-forward -n mongodb-operator svc/replica-set-svc 27017:27017
 Then you can connect for instance with MongoDB Compass, simply by creating a new connection to localhost.  
 At this point, there is no user or password, so the connection string is really only:
 ```
-mongodb://localhost:27017
+mongodb://localhost:27017/admin?authSource=admin&directConnection=true
 ```
 
 You will see something like this:
