@@ -23,38 +23,22 @@ To troubleshoot evuentual IP issues, run the following command
 kubectl describe mdb replica-set -n mongodb-operator 
 ```
 
-### Connect to the replica set (from the pod)
-
-To connect to the replica set from inside the cluster, run the following command
-```
-kubectl run -i --tty mongo-client --rm \
-  --image=mongo \
-  --restart=Never \
-  -- bash
-```
-
-Inside the pod, you will run this following command
-```
-mongosh --host replica-set-0.replica-set-svc.mongodb-operator.svc.cluster.local --port 27017
-```
-
-Note: you can also find a way to connect by using this [link](https://www.mongodb.com/docs/ops-manager/v8.0/tutorial/connect-to-mongodb/)
-
 ### Connect to the replica set (using port-forward)
 
-To forward a port from the MongoDB replica set to you local machine, run the following command
+To connect to the replica set from outside the Kubernetes cluster, we need to forward the port of the replicaset service:
 ```
-kubectl port-forward pod/replica-set-0 27017:27017 -n mongodb-operator
-
-```
-
-Once it is set,up, connect to MongoDB using this command 
-```
-mongosh --host localhost --port 27017
+kubectl port-forward -n mongodb-operator svc/replica-set-svc 27017:27017
 ```
 
-Verify the connection using ``rs.status()``
+Then you can connect for instance with MongoDB Compass, simply by creating a new connection to localhost.  
+At this point, there is no user or password, so the connection string is really only:
+```
+mongodb://localhost:27017
+```
 
+You will see something like this:
+
+![Alt text](/images/compass.png)
 
 
 ## References
