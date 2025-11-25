@@ -1,4 +1,4 @@
-# Deploy OpsManager and MongoDB locally with Kubernetes (MCK)
+# Deploy MongoDB & OpsManager locally with Kubernetes (MCK)
 
 Using MongoDB Controllers for Kubernetes (MCK) to deploy MongoDB and Ops Manager locally.  
 This is an opinionated tutorial aiming to simplify the deployment process.  
