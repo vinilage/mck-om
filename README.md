@@ -8,6 +8,7 @@ Feel free to clone this repo and to apply changes as you prefer.
 
 - [Make](https://www.gnu.org/software/make/) for running the make files.
 - [MongoDB Shell](https://www.mongodb.com/docs/mongodb-shell/) installed on your local machine.
+- [MongoDB Compass](https://www.mongodb.com/products/tools/compass) to connect to the MongoDB Server.
 - [Docker](https://www.docker.com/) to manage your containers.
 - [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/) to run commands against Kubernetes clusters.
 - [K3d](https://k3d.io/stable/) to create local Kubernetes clusters.
