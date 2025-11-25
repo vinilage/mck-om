@@ -12,11 +12,14 @@ make deploy-rs
 ```
 
 ### Verification
-If everything goes well, in ``Projects > replica-set > Deployment`` and you will see 3 replicas.
+If everything goes well, in OpsManager ``Projects > replica-set > Deployment`` and you will see 3 replicas.
 It may take some minutes to have them running, since the binaries will be downloaded.
 
 ![Alt text](/images/om-replicaset.png)
 
+In K9s you also should see all the replicaset members up and running:  
+
+![Alt text](/images/replicaset-k9s.png)
 
 To troubleshoot evuentual IP issues, run the following command
 ```
