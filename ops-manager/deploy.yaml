@@ -12,7 +12,7 @@ spec:
     mms.ignoreInitialUiSetup: "true"
     automation.versions.source: remote
     mms.adminEmailAddr: support@example.com
-    mms.fromEmailAddr: support@example.comx
+    mms.fromEmailAddr: support@example.com
     mms.replyToEmailAddr: support@example.com
     mms.mail.hostname: example.com
     mms.mail.port: "465"
