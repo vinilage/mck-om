@@ -10,7 +10,7 @@ spec:
     type: LoadBalancer
   configuration:
     mms.ignoreInitialUiSetup: "true"
-    automation.versions.source: mongodb
+    automation.versions.source: remote
     mms.adminEmailAddr: support@example.com
     mms.fromEmailAddr: support@example.comx
     mms.replyToEmailAddr: support@example.com
@@ -20,4 +20,4 @@ spec:
     mms.mail.transport: smtp
   applicationDatabase:
     members: 3
-    version: "8.0.7"
+    version: "8.2.0"
