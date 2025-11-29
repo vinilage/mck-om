@@ -49,4 +49,4 @@ spec:
       port: 27017
       targetPort: 27017
   selector:
-    app.kubernetes.io/instance: replica-set-community
+    app: replica-set-community-svc
