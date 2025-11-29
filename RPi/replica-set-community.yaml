@@ -40,13 +40,42 @@ stringData:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongodb-external
+  name: mongodb-0-nodeport
   namespace: mongodb
 spec:
-  type: LoadBalancer
+  type: NodePort
   ports:
-    - name: mongod
-      port: 27017
+    - port: 27017
       targetPort: 27017
+      nodePort: 30010
   selector:
-    app: replica-set-community-svc
+    statefulset.kubernetes.io/pod-name: replica-set-community-0
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-1-nodeport
+  namespace: mongodb
+spec:
+  type: NodePort
+  ports:
+    - port: 27017
+      targetPort: 27017
+      nodePort: 30011
+  selector:
+    statefulset.kubernetes.io/pod-name: replica-set-community-1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-2-nodeport
+  namespace: mongodb
+spec:
+  type: NodePort
+  ports:
+    - port: 27017
+      targetPort: 27017
+      nodePort: 30012
+  selector:
+    statefulset.kubernetes.io/pod-name: replica-set-community-2
+
