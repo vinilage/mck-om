@@ -36,3 +36,17 @@ metadata:
 type: Opaque
 stringData:
   password: "12345678"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-external
+  namespace: mongodb
+spec:
+  type: LoadBalancer
+  ports:
+    - name: mongod
+      port: 27017
+      targetPort: 27017
+  selector:
+    app.kubernetes.io/instance: replica-set-community
