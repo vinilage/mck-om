@@ -48,5 +48,6 @@ spec:
     - name: mongod
       port: 27017
       targetPort: 27017
+      nodePort: 30017
   selector:
     app: replica-set-community-svc
