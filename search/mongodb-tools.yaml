@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mongodb-tools-pod
+  namespace: mongodb-operator
+  labels:
+    app: mongodb-tools
+spec:
+  containers:
+  - name: mongodb-tools
+    image: mongodb/mongodb-community-server:8.0.16-ubi8
+    command: ["/bin/bash", "-c"]
+    args: ["sleep infinity"]

@@ -101,6 +101,7 @@ Fill all the fields, and you will be redirected to the control panel web-app.
 ## Other operations - WiP
 
 - [Deploy replica-set](https://github.com/vinilage/mck-om/blob/main/replica-set/README.md)
+- [Deploy Search & Vector Search](https://github.com/vinilage/mck-om/blob/main/search/README.md)
 - Deploy sharded cluster
 - Deploy multi-cluster
 - Configure TLS

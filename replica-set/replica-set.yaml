@@ -5,12 +5,17 @@ metadata:
   name: replica-set
   namespace: mongodb-operator
 spec:
+  type: ReplicaSet
   members: 3
   version: "8.2.0-ent"
+  persistent: true
+  # OpsManager Config
   opsManager:
     configMapRef:
       name: my-project
   credentials: organization-secret
-  type: ReplicaSet
-  persistent: true
-...
+  # Disable authentication to be able to manage the database without credentials
+  # do not do this in production environments
+  security:
+    authentication:
+      enabled: false
