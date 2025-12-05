@@ -1,9 +1,10 @@
 # Deploying Search & Vector Search
 
 ## Prerequisites
-- A local Kubernetes cluser running
-- OpsManager deployed and running
-- A replica-set deployed and running
+If you've followed [these steps](https://github.com/vinilage/mck-om/tree/main) you are good to go!
+- A local Kubernetes cluster 
+- OpsManager deployed
+- A replica-set deployed 
 - Database authentication disabled
 
 ## Import sample data to the local database
