@@ -1,4 +1,4 @@
-# Deploying Search and Vector Search
+# Deploying Search & Vector Search
 
 ## Prerequisites
 - A local Kubernetes cluser running
