@@ -50,3 +50,42 @@ mongodb://localhost:27017/admin?authSource=admin&directConnection=true
 ```
 
 ![Alt text](/images/Compass-sample-data.png)
+
+### Create a Search index
+
+Connect to the `mongodb-tools-pod`:
+```
+kubectl exec -n mongodb-operator -it mongodb-tools-pod -- sh
+```
+
+Find the primary member of the replica-set in OpsManager to build the connection string:  
+
+![Alt text](/images/om-finding-primary.png)
+
+Connect to the primary member of the MongoDB Database to have `write` access:
+```
+mongosh replica-set-0.replica-set-svc.mongodb-operator.svc.cluster.local
+```
+
+Prepare to create the search index inside of the `sample_mflix` database:
+```
+use sample_mflix
+```
+
+Create a `Vector Search` index in the `embedded_movies` collection:
+```
+db.embedded_movies.createSearchIndex("vector_index", "vectorSearch",
+    { "fields": [ {
+      "type": "vector",
+      "path": "plot_embedding_voyage_3_large",
+      "numDimensions": 2048,
+      "similarity":
+      "dotProduct",
+      "quantization": "scalar"
+    } ] });
+```
+
+Create a `Search` index in the `movies` collection:
+```
+db.movies.createSearchIndex("default", { mappings: { dynamic: true } });
+``` 
