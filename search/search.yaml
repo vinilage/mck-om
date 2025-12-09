@@ -1,14 +1,11 @@
 apiVersion: mongodb.com/v1
 kind: MongoDBSearch
 metadata:
-  name: replicaset-search
+  name: mongodb-search
+  namespace: mongodb-operator
 spec:
   # no need to specify source.mongodbResourceRef if MongoDBSearch CR has the same name as MongoDB CR
   # the operator infer it automatically
-  security:
-    tls:
-      certificateKeySecretRef:
-        name: replicaset-search-search-tls
   resourceRequirements:
     limits:
       cpu: "3"
