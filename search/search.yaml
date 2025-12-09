@@ -1,11 +1,9 @@
 apiVersion: mongodb.com/v1
 kind: MongoDBSearch
 metadata:
-  name: mongodb-search
+  name: replica-set # same name as the MongoDB replica-set resource to avoid specifying source.mongodbResourceRef
   namespace: mongodb-operator
 spec:
-  # no need to specify source.mongodbResourceRef if MongoDBSearch CR has the same name as MongoDB CR
-  # the operator infer it automatically
   resourceRequirements:
     limits:
       cpu: "3"
