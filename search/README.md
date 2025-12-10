@@ -95,3 +95,17 @@ Create a `Search` index in the `movies` collection:
 ```
 db.movies.createSearchIndex("default", { mappings: { dynamic: true } });
 ``` 
+
+## Verify
+
+You can verify if the indexes were created for Search:
+```
+db.runCommand({"listSearchIndexes": "movies"});
+````
+
+or Vector Search:
+```
+db.runCommand({"listSearchIndexes": "embedded_movies"});
+```
+
+Obs.: at the time of writing this guide, search indexes could not be seen yet in `Compass`!
