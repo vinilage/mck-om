@@ -94,7 +94,7 @@ You will see the login page of OpsManager running in your local Kubernetes clust
 
 ![Alt text](/images/om-login.png)
 
-### Create a new user
+### Create a new OM user
 
 If this is your first access with OpsManager, create a new user by clicking in Sign-up.  
 Fill all the fields, and you will be redirected to the control panel web-app.
