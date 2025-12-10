@@ -64,9 +64,13 @@ Find the primary member of the replica-set in OpsManager to build the connection
 
 ![Alt text](/images/om-finding-primary.png)
 
-Connect to the primary member of the MongoDB Database to have `write` access:
+Connect to the primary member of the MongoDB Database (to be able to `write`) and with `admin` user:
 ```
-mongosh replica-set-0.replica-set-svc.mongodb-operator.svc.cluster.local
+mongosh \
+  --username mdb-admin \
+  --password 12345678 \
+  --authenticationDatabase admin \
+  "mongodb://replica-set-0.replica-set-svc.mongodb-operator.svc.cluster.local"
 ```
 
 Prepare to create the search index inside of the `sample_mflix` database:
