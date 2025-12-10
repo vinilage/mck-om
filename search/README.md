@@ -129,3 +129,6 @@ The indexes should be visible in Compass:
 
 You can now query the data.  
 See the [documentation](https://www.mongodb.com/docs/kubernetes/current/tutorial/fts-vs-quickstart/#query-the-data-using-the-index.) and try out different Search and Vector Search queries.
+
+An example of a result for Vector Search using Compass:
+![Alt text](/images/compass-search-result.png)  
