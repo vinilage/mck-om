@@ -1,0 +1,26 @@
+apiVersion: mongodb.com/v1
+kind: MongoDBUser
+metadata:
+  name: mdb-admin
+  namespace: mongodb-operator
+spec:
+  username: mdb-admin
+  db: admin
+  mongodbResourceRef:
+    name: replica-set
+  passwordSecretKeyRef:
+    name: mdb-admin-user-password
+    key: password
+  roles:
+  - name: root
+    db: admin
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mdb-admin-user-password
+  namespace: mongodb-operator
+stringData:
+  password: "12345678"

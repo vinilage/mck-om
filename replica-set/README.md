@@ -1,7 +1,7 @@
 # Deploy a replica set
 
 ## Prerequisities:  
-The prerequisites steps are [here](https://github.com/vinilage/mck-om)
+All the prerequisites steps are [here](https://github.com/vinilage/mck-om).
 - Kubernetes cluster
 - MCK installed
 - OpsManager running 
@@ -64,6 +64,8 @@ You will see something like this:
 
 ![Alt text](/images/compass.png)
 
+## Enable SCRUM Authentication
+- [Enable SCRUM and create database users](https://github.com/vinilage/mck-om/blob/main/user/README.md)
 
 ## References
 

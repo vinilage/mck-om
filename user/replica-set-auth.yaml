@@ -1,0 +1,23 @@
+---
+apiVersion: mongodb.com/v1
+kind: MongoDB
+metadata:
+  name: replica-set
+  namespace: mongodb-operator
+spec:
+  type: ReplicaSet
+  members: 3
+  version: "8.2.0-ent"
+  persistent: true
+  # OpsManager Config
+  opsManager:
+    configMapRef:
+      name: my-project
+  credentials: organization-secret
+  # MongoDB authentication enabled, users needs to be created (see ./users folder)
+  security:
+    authentication:
+      enabled: true
+      ignoreUnknownUsers: true
+      modes:
+      - SCRAM

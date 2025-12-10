@@ -25,7 +25,8 @@ After installing all the tools, we will:
 - add the Helm repository for installing the Operator
 - install the Operator (MCK)
 - deploy OpsManager with AppDB (3 members)
-- deploy a MongoDB replicaset (3 members)
+- deploy a MongoDB replicaset (3 members) with SCRAM authentication enabled
+- create 3 database users: `mdb-admin`, `mdb-user` and `search-sync-source`
 
 ## Setup a local K3d cluster
 
@@ -98,7 +99,7 @@ You will see the login page of OpsManager running in your local Kubernetes clust
 If this is your first access with OpsManager, create a new user by clicking in Sign-up.  
 Fill all the fields, and you will be redirected to the control panel web-app.
 
-## Other operations - WiP
+## Continue with these steps
 
 - [Deploy replica-set](https://github.com/vinilage/mck-om/blob/main/replica-set/README.md)
 - [Deploy Search & Vector Search](https://github.com/vinilage/mck-om/blob/main/search/README.md)

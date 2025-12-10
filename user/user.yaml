@@ -1,0 +1,26 @@
+apiVersion: mongodb.com/v1
+kind: MongoDBUser
+metadata:
+  name: mdb-user
+  namespace: mongodb-operator
+spec:
+  username: mdb-user
+  db: admin
+  mongodbResourceRef:
+    name: replica-set
+  passwordSecretKeyRef:
+    name: mdb-user-password
+    key: password
+  roles:
+  - name: readWrite
+    db: sample_mflix
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mdb-user-password
+  namespace: mongodb-operator
+stringData:
+  password: "12345678"

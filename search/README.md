@@ -2,10 +2,10 @@
 
 ## Prerequisites
 If you've followed [these steps](https://github.com/vinilage/mck-om/tree/main) you are good to go!
-- A local Kubernetes cluster 
-- OpsManager deployed
-- A replica-set deployed 
-- Database authentication disabled
+- [A local Kubernetes cluster](https://github.com/vinilage/mck-om/tree/main) 
+- [OpsManager deployed](https://github.com/vinilage/mck-om/tree/main)
+- [A replica-set deployed](https://github.com/vinilage/mck-om/blob/main/replica-set/README.md) 
+- [SCRUM authentication enabled and database users created](https://github.com/vinilage/mck-om/blob/main/user/README.md)
 
 ## Import sample data to the local database
 
@@ -33,6 +33,8 @@ Import sample data to the local database (replica-set):
   mongorestore \
    --host replica-set-svc \
    --port 27017 \
+   --username mdb-admin \
+   --password 12345678 \
    --archive=/tmp/sample_mflix.archive \
    --nsInclude 'sample_mflix.*'
 ```
@@ -46,7 +48,7 @@ kubectl port-forward -n mongodb-operator svc/replica-set-svc 27017:27017
 
 Connect with Compass with the following connection string:
 ```
-mongodb://localhost:27017/admin?authSource=admin&directConnection=true
+mongodb://admin:12345678@localhost:27017/admin?authSource=admin&directConnection=true
 ```
 
 ![Alt text](/images/Compass-sample-data.png)
