@@ -46,3 +46,6 @@ mongodb://mdb-admin:12345678@localhost:27017/admin?authSource=admin&directConnec
 
 You will see something like this:
 ![Alt text](/images/compass.png)
+
+## Continue...
+- [Deploy Search & Vector Search](https://github.com/vinilage/mck-om/blob/main/search/README.md)
