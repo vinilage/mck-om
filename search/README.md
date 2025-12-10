@@ -96,7 +96,7 @@ Create a `Search` index in the `movies` collection:
 db.movies.createSearchIndex("default", { mappings: { dynamic: true } });
 ``` 
 
-## Verify
+## Verify the indexes
 
 You can verify if the indexes were created for Search:
 ```
@@ -108,4 +108,18 @@ or Vector Search:
 db.runCommand({"listSearchIndexes": "embedded_movies"});
 ```
 
-Obs.: at the time of writing this guide, search indexes could not be seen yet in `Compass`!
+## Verify with Compass
+With `Compass` you can also see the search indexes `if you are connected to the primary member`.  
+You can check if you are connected to the primary by opening the MongoDB Shell in Compass.  
+You should see `Enterprise replica-set [direct: primary] admin >`.  
+
+If you see `secondary`, forward the port directly to the primary (check in OM what is your primary).  
+Example would be:
+
+```
+kubectl port-forward pod/replica-set-0 27017:27017 -n mongodb-operator
+```
+
+The indexes should be visible in Compass:  
+
+![Alt text](/images/compass-search-index.png)
