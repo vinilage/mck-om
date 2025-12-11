@@ -27,7 +27,8 @@ After installing all the tools, we will:
 - add the Helm repository for installing the Operator.
 - install the Operator (MCK).
 - deploy OpsManager with AppDB (3 members).
-- deploy a MongoDB replicaset (3 members) with SCRAM authentication enabled.
+- deploy a MongoDB replicaset (3 members) without authentication.
+- enable SCRAM authentication in the replica-set.
 - create 3 database users: `mdb-admin`, `mdb-user` and `search-sync-source`.
 - insert a sample data in your local database and create Search & Vector Search indexes.
 - deploy `Search` and execute queries.
