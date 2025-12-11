@@ -30,8 +30,9 @@ After installing all the tools, we will:
 - deploy a MongoDB replicaset (3 members) without authentication.
 - enable SCRAM authentication in the replica-set.
 - create 3 database users: `mdb-admin`, `mdb-user` and `search-sync-source`.
-- insert a sample data in your local database and create Search & Vector Search indexes.
-- deploy `Search` and execute queries.
+- insert a sample data in your local database .
+- deploy `Search` and create Search & Vector Search indexes.
+- execute `Search` and `Vector Search` queries.
 
 ## Clone this repo in your local machine
 
