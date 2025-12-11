@@ -6,6 +6,7 @@ Feel free to clone this repo and to apply changes as you prefer.
 
 ## Prerequisities
 
+- [Git](https://git-scm.com/install/) for cloning this repo and execute the commands.
 - [Make](https://www.gnu.org/software/make/) for running the make files.
 - [MongoDB Shell](https://www.mongodb.com/docs/mongodb-shell/) installed on your local machine.
 - [MongoDB Compass](https://www.mongodb.com/products/tools/compass) to connect to the MongoDB Server.
@@ -21,12 +22,21 @@ Feel free to clone this repo and to apply changes as you prefer.
 
 ## Summary of what we will do
 After installing all the tools, we will:  
+- clone this repository in your local machine
 - create a local Kubernetes cluster with K3d
 - add the Helm repository for installing the Operator
 - install the Operator (MCK)
 - deploy OpsManager with AppDB (3 members)
 - deploy a MongoDB replicaset (3 members) with SCRAM authentication enabled
 - create 3 database users: `mdb-admin`, `mdb-user` and `search-sync-source`
+
+## Clone this repo in your local machine
+
+The first step is to clone this repository in your local machine in order to have all necessary files.  
+
+```
+git clone https://github.com/vinilage/mck-om.git
+```
 
 ## Setup a local K3d cluster
 
