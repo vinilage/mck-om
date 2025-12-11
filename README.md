@@ -17,8 +17,8 @@ Feel free to clone this repo and to apply changes as you prefer.
 
 ### Recommendations
 - Docker resource allocation to avoid issues: `Docker -> Settings -> Resources`.  
-- Memory limit: at least 15GB
-- CPU limit: 10
+- Memory limit: at least `15GB`
+- CPU limit: `10`
 
 ## Summary of what we will do
 After installing all the tools, we will:  
@@ -113,7 +113,7 @@ You will see the login page of OpsManager running in your local Kubernetes clust
 If this is your first access with OpsManager, create a new user by clicking in Sign-up.  
 Fill all the fields, and you will be redirected to the control panel web-app.
 
-## Continue with these steps
+## Next steps...
 
 - [Deploy replica-set](https://github.com/vinilage/mck-om/blob/main/replica-set/README.md)
 - [Deploy Search & Vector Search](https://github.com/vinilage/mck-om/blob/main/search/README.md)
