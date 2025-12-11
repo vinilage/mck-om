@@ -1,7 +1,7 @@
 # MongoDB, OpsManager and Search locally with MCK 
 
-Using MongoDB Controllers for Kubernetes (MCK) to deploy MongoDB and Ops Manager locally.  
-This is an opinionated tutorial aiming to simplify the deployment process.  
+Using MongoDB Controllers for Kubernetes (MCK) to deploy MongoDB, Ops Manager and Search locally.  
+This is an opinionated tutorial aiming to PoC the main EA components locally.  
 Feel free to clone this repo and to apply changes as you prefer.  
 
 ## Prerequisities
