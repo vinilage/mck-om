@@ -22,13 +22,15 @@ Feel free to clone this repo and to apply changes as you prefer.
 
 ## Summary of what we will do
 After installing all the tools, we will:  
-- clone this repository in your local machine
-- create a local Kubernetes cluster with K3d
-- add the Helm repository for installing the Operator
-- install the Operator (MCK)
-- deploy OpsManager with AppDB (3 members)
-- deploy a MongoDB replicaset (3 members) with SCRAM authentication enabled
-- create 3 database users: `mdb-admin`, `mdb-user` and `search-sync-source`
+- clone this repository in your local machine.
+- create a local Kubernetes cluster with K3d.
+- add the Helm repository for installing the Operator.
+- install the Operator (MCK).
+- deploy OpsManager with AppDB (3 members).
+- deploy a MongoDB replicaset (3 members) with SCRAM authentication enabled.
+- create 3 database users: `mdb-admin`, `mdb-user` and `search-sync-source`.
+- insert a sample data in your local database and create Search & Vector Search indexes.
+- deploy `Search` and execute queries.
 
 ## Clone this repo in your local machine
 
