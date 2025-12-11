@@ -17,7 +17,7 @@ Feel free to clone this repo and to apply changes as you prefer.
 
 ### Recommendations
 - Docker resource allocation to avoid issues: `Docker -> Settings -> Resources`.  
-- Memory limit: 15GB
+- Memory limit: at least 15GB
 - CPU limit: 10
 
 ## Summary of what we will do
