@@ -69,10 +69,10 @@ To verify the installation you can run ``k9s -n mongodb-operator``
 Fill your credentials in the ``ops-manager/secret.yaml`` file.  
 Put the desired version of Ops Manager and Application Database (AppDB) in the ``ops-manager/deploy.yaml`` 
 
-Then run the following command from the ``./ops-manager`` folder:
+Then run the following command:
 
 ```
-make deploy-om
+kubectl apply -f ./ops-manager/deploy-om.yaml
 ```  
 
 The deployment may take long (10 minutes or more) since the operator will pull the images of ``AppDB`` and ``OpsManager`` (2GB). Also, OpsManager needs around 5 minutes to start.  

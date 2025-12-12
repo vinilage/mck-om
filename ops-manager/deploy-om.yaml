@@ -21,3 +21,17 @@ spec:
   applicationDatabase:
     members: 3
     version: "8.2.0"
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: om-admin-secret
+  namespace: mongodb-operator
+type: Opaque
+stringData:
+  Username: "my-user"
+  Password: "123456"
+  FirstName: ""
+  LastName: ""
