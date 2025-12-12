@@ -67,7 +67,7 @@ To verify the installation you can run ``k9s -n mongodb-operator``
 
 ## Deploy Ops Manager
 
-Set your preferrable versions of Ops Manager and Application Database (AppDB) in `ops-manager/deploy-om.yaml`.
+Set the verions of OM and AppDB in `ops-manager/deploy-om.yaml`.
 Then run the following command:
 
 ```
