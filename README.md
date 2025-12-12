@@ -7,7 +7,6 @@ Feel free to clone this repo and to apply changes as you prefer.
 ## Prerequisities
 
 - [Git](https://git-scm.com/install/) for cloning this repo and execute the commands.
-- [Make](https://www.gnu.org/software/make/) for running the make files.
 - [MongoDB Shell](https://www.mongodb.com/docs/mongodb-shell/) installed on your local machine.
 - [MongoDB Compass](https://www.mongodb.com/products/tools/compass) to connect to the MongoDB Server.
 - [Docker](https://www.docker.com/) to manage your containers.
@@ -55,10 +54,12 @@ Verify the new cluster by running ``kubectl get nodes`` command or with `k9s`.
 
 ## Install the operator
 
-To install the MongoDB Controllers for Kubernetes (enterprise) run the makefile on the ``./operator`` folder:
+To install the MongoDB Controllers for Kubernetes (enterprise) run:
 
 ```
-make install-mck
+helm repo add mongodb https://mongodb.github.io/helm-charts
+helm repo update
+helm install kubernetes-operator mongodb/mongodb-kubernetes --namespace mongodb-operator --create-namespace
 ```
 
 This will install the latest version of the MCK operator via Helm.  
