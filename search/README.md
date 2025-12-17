@@ -60,17 +60,13 @@ Connect to the `mongodb-tools-pod`:
 kubectl exec -n mongodb-operator -it mongodb-tools-pod -- sh
 ```
 
-Find the primary member of the replica-set in OpsManager to build the connection string:  
-
-![Alt text](/images/om-finding-primary.png)
-
 Connect to the primary member of the MongoDB Database (to be able to `write`) and with `admin` user:
 ```
 mongosh \
   --username mdb-admin \
   --password 12345678 \
   --authenticationDatabase admin \
-  "mongodb://replica-set-0.replica-set-svc.mongodb-operator.svc.cluster.local"
+  "mongodb://replica-set-0.replica-set-svc.mongodb-operator.svc.cluster.local:27017,replica-set-1.replica-set-svc.mongodb-operator.svc.cluster.local:27017,replica-set-2.replica-set-svc.mongodb-operator.svc.cluster.local:27017/?replicaSet=replica-set"
 ```
 
 Prepare to create the search index inside of the `sample_mflix` database:
