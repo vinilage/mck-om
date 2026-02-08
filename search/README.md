@@ -54,6 +54,14 @@ mongodb://admin:12345678@localhost:27017/admin?authSource=admin&directConnection
 
 ![Alt text](/images/Compass-sample-data.png)
 
+### Deploy Search
+
+When deploying Search with MCK, it will also enable it in the database:
+
+```
+kubectl apply -f search.yaml
+```
+
 ### Create a Search index
 
 Connect to the `mongodb-tools-pod`:
