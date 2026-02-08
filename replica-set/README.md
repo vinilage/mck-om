@@ -29,7 +29,7 @@ The ``replica-set/secret.yaml`` and ``replica-set/config-map.yaml`` files needs 
 
 Run the following command in the ``./replica-set`` folder to start deploying the replica-set under a new project.
 ```
-make deploy-rs
+kubectl apply -f secret.yaml -f config-map.yaml -f replica-set.yaml
 ```
 
 ### Verification
