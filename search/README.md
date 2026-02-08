@@ -9,7 +9,8 @@ If you've followed [these steps](https://github.com/vinilage/mck-om/tree/main) y
 
 ## Import sample data to the local database
 
-Deploy a `MongoDB Tools Pod` to support importing the data:
+Deploy a `MongoDB Tools Pod` to support importing the data.  
+Go to `./search/` and run:
 
 ```
 kubectl apply -f mongodb-tools.yaml
