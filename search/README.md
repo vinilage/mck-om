@@ -31,13 +31,10 @@ curl -fSL https://atlas-education.s3.amazonaws.com/sample_mflix.archive -o /tmp/
 Import sample data to the local database (replica-set):
 
 ```
-  mongorestore \
-   --host replica-set-svc \
-   --port 27017 \
-   --username mdb-admin \
-   --password 12345678 \
-   --archive=/tmp/sample_mflix.archive \
-   --nsInclude 'sample_mflix.*'
+mongorestore \
+  --uri="mongodb://mdb-admin:12345678@replica-set-svc:27017/?replicaSet=replica-set&authSource=admin" \
+  --archive=/tmp/sample_mflix.archive \
+  --nsInclude 'sample_mflix.*'
 ```
 
 ### Verify if the `sample_mflix` database is imported  
