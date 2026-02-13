@@ -134,3 +134,16 @@ See the [documentation](https://www.mongodb.com/docs/kubernetes/current/tutorial
 
 An example of a result for Vector Search using Compass:
 ![Alt text](/images/compass-search-result.png)  
+
+## Enable Auto Embeddings
+
+### Create the API keys
+Create the API Keys in Atlas or in the VoyageAI.  
+Add your keys to the Secret in the `auto-embeddings.yaml` file, fields `query-key` and `indexing-key`.
+
+### Enable auto-embeddings
+Run:
+
+```
+kubectl apply -f auto-embeddings.yaml
+```
