@@ -1,0 +1,29 @@
+apiVersion: mongodb.com/v1
+kind: MongoDBSearch
+metadata:
+  name: replica-set # same name as the MongoDB replica-set resource to avoid specifying source.mongodbResourceRef
+  namespace: mongodb-operator
+spec:
+  resourceRequirements:
+    limits:
+      cpu: "3"
+      memory: 5Gi
+    requests:
+      cpu: "2"
+      memory: 3Gi
+  autoEmbedding:
+      providerEndpoint: https://ai.mongodb.com/v1/embeddings # or https://api.voyageai.com/v1/embeddings if created from Voyage AI.
+      embeddingModelAPIKeySecret:
+        name: voyage-api-keys
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: voyage-api-keys
+  namespace: mongodb-operator
+type: Opaque
+stringData:
+  query-key: "<embedding-model-query-key>"
+  indexing-key: "<embedding-model-indexing-key>"
