@@ -2,7 +2,7 @@
 # MCK 1.7.0
 # https://raw.githubusercontent.com/mongodb/mongodb-kubernetes/1.7.0/public/mongodb-kubernetes.yaml
 #
-# This file is inteded to demonstrate what is appied when installing the Operator
+# This file is intended to demonstrate what is applied when installing the Operator
 #
 ###########################
 ---

@@ -119,6 +119,7 @@ Fill all the fields, and you will be redirected to the control panel web-app.
 - Deploy sharded cluster
 - Deploy multi-cluster
 - Configure TLS
+- Enable backup
 
 
 ## References
