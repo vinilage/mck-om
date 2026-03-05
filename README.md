@@ -83,7 +83,7 @@ You will see the pods starting:
 
 After around 15 minutes, if you run ``k9s -n mongodb-operator`` you must see:
 
-![Alt text](/images/k9s-after-install.png)
+![Alt text](/img/k9s-after-install.png)
 
 ## Accessing OpsManager via browser
 
@@ -103,7 +103,7 @@ http://localhost:8080
 
 You will see the login page of OpsManager running in your local Kubernetes cluster.
 
-![Alt text](/images/om-login.png)
+![Alt text](/img/om-login.png)
 
 ### Create a new OM user
 
@@ -145,7 +145,7 @@ kubectl port-forward -n mongodb-operator pod/ops-manager-db-0 27017:27017
 ```
 If you are now connected to the primary, a `+` icon will appear!  
 
-![Alt text](/images/compass-primary.png)
+![Alt text](/img/compass-primary.png)
 
 ## Next steps...
 

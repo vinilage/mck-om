@@ -36,11 +36,11 @@ kubectl apply -f secret.yaml -f config-map.yaml -f replica-set.yaml
 If everything goes well, in OpsManager ``Projects > replica-set > Deployment`` and you will see 3 replicas.
 It may take some minutes to have them running, since the binaries will be downloaded.
 
-![Alt text](/images/om-replicaset.png)
+![Alt text](/img/om-replicaset.png)
 
 In K9s you also should see all the replicaset members up and running:  
 
-![Alt text](/images/replicaset-k9s.png)
+![Alt text](/img/replicaset-k9s.png)
 
 To troubleshoot evuentual IP issues, run the following command
 ```
@@ -62,7 +62,7 @@ mongodb://localhost:27017/admin?authSource=admin&directConnection=true
 
 You will see something like this:
 
-![Alt text](/images/compass.png)
+![Alt text](/img/compass.png)
 
 ## Continue
 - [Enable SCRUM and create database users](https://github.com/vinilage/mck-om/blob/main/user/README.md)

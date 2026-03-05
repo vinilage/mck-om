@@ -49,7 +49,7 @@ Connect with Compass with the following connection string:
 mongodb://admin:12345678@localhost:27017/admin?authSource=admin&directConnection=true
 ```
 
-![Alt text](/images/Compass-sample-data.png)
+![Alt text](/img/Compass-sample-data.png)
 
 ### Deploy Search
 
@@ -124,7 +124,7 @@ kubectl port-forward pod/replica-set-0 27017:27017 -n mongodb-operator
 
 The indexes should be visible in Compass:  
 
-![Alt text](/images/compass-search-index.png)  
+![Alt text](/img/compass-search-index.png)  
 
 
 ## Querying
@@ -133,7 +133,7 @@ You can now query the data.
 See the [documentation](https://www.mongodb.com/docs/kubernetes/current/tutorial/fts-vs-quickstart/#query-the-data-using-the-index.) and try out different Search and Vector Search queries.
 
 An example of a result for Vector Search using Compass:
-![Alt text](/images/compass-search-result.png)  
+![Alt text](/img/compass-search-result.png)  
 
 ## Enable Auto Embeddings
 
