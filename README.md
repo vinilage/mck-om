@@ -110,7 +110,44 @@ You will see the login page of OpsManager running in your local Kubernetes clust
 ### Create a new OM user
 
 If this is your first access with OpsManager, create a new user by clicking in Sign-up.  
-Fill all the fields, and you will be redirected to the control panel web-app.
+Fill all the fields, and you will be redirected to the control panel web-app.  
+
+
+## Connect to AppDB (optional)
+
+In case you need to connect to AppDB with Compass, you need to:
+
+1. Port forward the AppDB `svc/ops-manager-db-svc` service:
+```
+kubectl port-forward -n mongodb-operator svc/ops-manager-db-svc 27017:27017
+```
+
+2. The `password` to connect is stored in the `ops-manager-db-om-password` Kubernetes secret, get its value by:
+``` 
+kubectl get secret ops-manager-db-om-password -n mongodb-operator -o jsonpath='{.data.password}' | base64 --decode
+``` 
+
+3. Configure a new Compass connection, where the username is `mongodb-ops-manager`, so the connection string is:
+
+```
+mongodb://mongodb-ops-manager:<password>:27017/admin?authSource=admin&directConnection=true
+```
+
+Users are stored in `mmsdbconfig.config.users` in case you forgot the password and SMTP is not configured to remind it.
+
+#### No write access if not connected to the primary: 
+Sometimes it happen that you are not connected to the primary member, then you cannot write in the database.  
+This happens because the Kubernetes Service routes your traffic to a random pod of the AppDB replica-set.  
+  
+A "quick and dirt" way is to force the port forward to each of the pods `0`, `1`, `2` and try to connect, one at a time.  
+In Compass, click in the refresh button next to the database.  
+
+```
+kubectl port-forward -n mongodb-operator pod/ops-manager-db-0 27017:27017
+```
+If you are now connected to the primary, a `+` icon will appear!  
+
+![Alt text](/images/compass-primary.png)
 
 ## Next steps...
 
