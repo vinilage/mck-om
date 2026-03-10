@@ -5,6 +5,10 @@ metadata:
   namespace: mongodb-operator
 data:
   baseUrl: http://ops-manager-svc.mongodb-operator.svc.cluster.local:8080
-  orgId: "your-org-id"
+
+  # Optional Parameters
+  # projectName: My Ops/Cloud Manager Project
+
+  orgId: 69b069c0426af542e1552310
 
 
