@@ -46,7 +46,7 @@ kubectl port-forward -n mongodb-operator svc/replica-set-svc 27017:27017
 
 Connect with Compass with the following connection string:
 ```
-mongodb://admin:12345678@localhost:27017/admin?authSource=admin&directConnection=true
+mongodb://mdb-admin:12345678@localhost:27017/admin?authSource=admin&directConnection=true
 ```
 
 ![Alt text](/img/Compass-sample-data.png)
