@@ -14,10 +14,6 @@ Feel free to clone this repo and to apply changes as you prefer.
 - [K3d](https://k3d.io/stable/) to create local Kubernetes clusters.
 - [K9s](https://k9scli.io/) to manage your local clusters (optional but recommended).
 
-### Recommendations
-- Docker resource allocation to avoid issues: `Docker -> Settings -> Resources`.  
-- Memory limit: at least `15GB`
-- CPU limit: `10`
 
 ## Summary of what we will do
 After installing all the tools, we will:  
@@ -38,6 +34,11 @@ The first step is to clone this repository in your local machine in order to hav
 ```
 git clone https://github.com/vinilage/mck-om.git
 ```
+
+## Increase the resources in Docker
+To avoid issues related to resources (CPU, RAM), go to `Docker -> Settings -> Resources` and set:
+- Memory limit: at least `15GB`
+- CPU limit: `10`
 
 ## Setup a local K3d cluster
 
