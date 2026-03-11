@@ -1,0 +1,52 @@
+############################################# Ceritificate Replica Set
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: mdb-rs-server-tls
+  namespace: mongodb-operator
+spec:
+  secretName: certs-mdb-rs-cert
+  issuerRef:
+    name: my-ca-issuer
+    kind: ClusterIssuer
+  duration: 240h0m0s
+  renewBefore: 120h0m0s
+  usages:
+    - digital signature
+    - key encipherment
+    - server auth
+    - client auth
+  dnsNames:
+    # per‑member pod + pod FQDNs (3‑member RS)
+    - "mdb-rs-0"
+    - "mdb-rs-0.mdb-rs-svc.mongodb.svc.cluster.local"
+    - "mdb-rs-1"
+    - "mdb-rs-1.mdb-rs-svc.mongodb.svc.cluster.local"
+    - "mdb-rs-2"
+    - "mdb-rs-2.mdb-rs-svc.mongodb.svc.cluster.local"
+    # service‑level FQDNs
+    - "mdb-rs-svc.mongodb.svc.cluster.local"
+    - "*.mdb-rs-svc.mongodb.svc.cluster.local"
+
+---
+
+############################################# Ceritificate Search
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: mdb-rs-search-tls
+  namespace: mongodb-operator
+spec:
+  secretName: mdb-rs-search-tls
+  issuerRef:
+    name: my-ca-issuer
+    kind: ClusterIssuer
+  duration: 240h0m0s
+  renewBefore: 120h0m0s
+  usages:
+    - digital signature
+    - key encipherment
+    - server auth
+    - client auth
+  dnsNames:
+    - "mdb-rs-search-svc.mongodb.svc.cluster.local"
