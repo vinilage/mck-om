@@ -79,6 +79,15 @@ wait_for_search_index_queryable() {
 echo "🔍 Generating Search Activity for Dashboard Demo..."
 echo "=================================================="
 
+# Start tools pod if not already running
+if ! kubectl get pod -n "${K8S_NAMESPACE}" "${K8S_MONGOD_POD}" >/dev/null 2>&1; then
+  echo "🚀 Starting MongoDB tools pod for query execution..."
+  cd ../search
+  kubectl apply -f mongodb-tools.yaml -n "${K8S_NAMESPACE}"
+  echo "⏳ Waiting for tools pod to be ready..."
+  kubectl wait -n "${K8S_NAMESPACE}" --for=condition=Ready pod/"${K8S_MONGOD_POD}" --timeout=120s
+fi
+
 # Check if MongoDB is accessible
 if ! run_mongosh_admin --eval "db.adminCommand('ping')" >/dev/null 2>&1; then
   echo "❌ MongoDB is not accessible via kubectl exec"

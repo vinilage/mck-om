@@ -157,7 +157,7 @@ test_metric_smart() {
 # Read the dashboard file and extract unique Prometheus queries
 echo "📋 Extracting queries from dashboard..."
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-dashboard_file="$SCRIPT_DIR/../grafana/provisioning/dashboards/mongodb-dashboard.json"
+dashboard_file="$SCRIPT_DIR/grafana-configs/dashboards/mongodb-dashboard.json"
 
 # Extract all expr queries from the dashboard more carefully
 temp_file=$(mktemp)
