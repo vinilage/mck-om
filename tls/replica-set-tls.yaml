@@ -26,4 +26,4 @@ spec:
     ################################## TLS configuration
     tls:
       enabled: true
-      ca: mdb-rs-ca-configmap # ConfigMap with CA PEM
+      ca: replica-set-ca-configmap # ConfigMap with CA PEM

@@ -16,3 +16,4 @@ spec:
     tls:
       certificateKeySecretRef:
         name: mdb-rs-search-tls # search TLS secret
+      # CA is inherited from the replica-set: mdb-rs-ca-configmap

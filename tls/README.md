@@ -57,19 +57,15 @@ This ConfigMap will be referenced in MCK CRs as the trusted CA bundle to:
 - Verify TLS server certificates for MongoDB, Ops Manager, Search, etc.
 - Optionally validate client certs, LDAP server certs, etc
 
-#### 1. Copy the CA Certificate to a temp file
+#### 1. Create a CA Certificate
 
-Copy the CA certificate from the `root-secret` in `cert-manager` namespace to a temp file.  
-The environment variable `TMP_CA_CERT` will be used to store the temp file path:  
+Create a CA certificate from the `root-secret` in `cert-manager` namespace to a `ca.pem` file.  
 
 ```
-TMP_CA_CERT="$(mktemp)"
-trap 'rm -f "${TMP_CA_CERT}"' EXIT
-
 kubectl --context k3d-mongodb-mck-cluster \
   get secret root-secret \
   -n cert-manager \
-  -o jsonpath="{.data['ca\\.crt']}" | base64 --decode > "${TMP_CA_CERT}"
+  -o jsonpath="{.data['ca\\.crt']}" | base64 --decode > ca.pem
 ```
 
 #### 2. Create the ConfigMap
@@ -78,7 +74,7 @@ The following command will:
 - create a `replica-set-ca-configmap` config-map
 - config-map fields: `ca-pem`, `mms-ca.crt` and `ca.crt` 
 - namespace: `mongodb-operator` 
-- copy the CA certificate from the temp file to the config-map fields  
+- copy the CA certificate from the `ca.pem` file to the config-map fields  
 
 An example of the config-map structure can be seen in `config-map-example.yaml`.  
 
@@ -86,10 +82,10 @@ An example of the config-map structure can be seen in `config-map-example.yaml`.
 kubectl --context "k3d-mongodb-mck-cluster" \
   create configmap "replica-set-ca-configmap" \
   -n "mongodb-operator" \
-  --from-file=ca-pem="${TMP_CA_CERT}" \
-  --from-file=mms-ca.crt="${TMP_CA_CERT}" \
-  --from-file=ca.crt="${TMP_CA_CERT}" \
-  --dry-run=client -o yaml | kubectl --context "k3d-mongodb-mck-cluster" apply -f - 
+  --from-file=ca-pem=./ca.pem \
+  --from-file=mms-ca.crt=./ca.pem \
+  --from-file=ca.crt=./ca.pem \
+  --dry-run=client -o yaml | kubectl --context "k3d-mongodb-mck-cluster" apply -f -
 ```
 
 Confirm that the `replica-set-ca-configmap` has been created.  
