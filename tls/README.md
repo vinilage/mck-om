@@ -113,3 +113,13 @@ You should see the certificates `mdb-rs-server-tls`, `mdb-rs-search-tls`, and `o
 In K9s type `:` and `certificates`:  
 
 ![Alt text](/img/certificates.png)
+
+
+## Enable TLS in the current replica-set
+
+Now that the certificates are issued, let's enable it in the current replica-set.  
+We basically added `.spec.security.enabled: true` and the respective CA. So run:  
+
+```
+kubectl apply -f replica-set-tls.yaml
+```
