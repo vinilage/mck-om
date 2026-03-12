@@ -14,5 +14,5 @@ spec:
   ################################## TLS configuration
   security:
     tls:
-      enabled: true
-      ca: mdb-rs-search-tls # search TLS secret
+      certificateKeySecretRef:
+        name: mdb-rs-search-tls # search TLS secret

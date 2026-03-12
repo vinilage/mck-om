@@ -124,6 +124,12 @@ We basically added `.spec.security.enabled: true` and the respective CA. So run:
 kubectl apply -f replica-set-tls.yaml
 ```
 
+Also let's enable TLS for Search:  
+
+```
+kubectl apply -f search-tls.yaml
+```
+
 Then TLS should be enabled and this should be shown in OpsManager UI for the `replica-set`:  
 
 ![Alt text](/img/om-tls-enabled.png)
