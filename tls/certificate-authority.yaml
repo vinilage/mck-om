@@ -18,7 +18,7 @@ metadata:
 spec:
   isCA: true 
   commonName: my-selfsigned-ca    
-  secretName: root-secret
+  secretName: root-secret   ## create a secret with the CA certificate
   privateKey:
     algorithm: ECDSA
     size: 256

@@ -22,11 +22,8 @@ spec:
       ignoreUnknownUsers: true
       modes:
       - SCRAM
-      certsSecretPrefix: certs
+    certsSecretPrefix: certs
     ################################## TLS configuration
     tls:
       enabled: true
       ca: mdb-rs-ca-configmap # ConfigMap with CA PEM
-      net:
-        ssl:
-          mode: "preferSSL"
