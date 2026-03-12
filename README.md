@@ -169,7 +169,7 @@ kubectl delete pod <pod> -n mongodb-operator --grace-period=0 --force
 ```
 
 ### 2. YAML changes are not taking effect
-If you restart Docker and the containers, you need to update the IP in OpsManager `API Access List`.  
+If you restart Docker, you need to update the MCK's IP in OpsManager's `API Access List` (steps described above).  
 If the IP is not updated there, if you apply YAML changes, nothing will happens!
 
 
