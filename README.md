@@ -162,7 +162,7 @@ If you are now connected to the primary, a `+` icon will appear!
 
 ### 1. Pods get stuck at startup after restarting Docker 
 If you restart Docker and restart the containers, sometimes Pods can get stuck.  
-If this happens, try to force them to be deleted:
+If this happens, force them to be deleted, so they are re-created:
 
 ``` 
 kubectl delete pod <pod> -n mongodb-operator --grace-period=0 --force
