@@ -116,17 +116,17 @@ Fill all the fields, and you will be redirected to the control panel web-app.
 
 In case you need to connect to AppDB with Compass, you need to:
 
-1. Port forward the AppDB `svc/ops-manager-db-svc` service:
+Port forward the AppDB `svc/ops-manager-db-svc` service:
 ```
 kubectl port-forward -n mongodb-operator svc/ops-manager-db-svc 27017:27017
 ```
 
-2. The `password` to connect is stored in the `ops-manager-db-om-password` Kubernetes secret, get its value by:
+The `password` to connect is stored in the `ops-manager-db-om-password` Kubernetes secret, get its value by:
 ``` 
 kubectl get secret ops-manager-db-om-password -n mongodb-operator -o jsonpath='{.data.password}' | base64 --decode
 ``` 
 
-3. Configure a new Compass connection, where the username is `mongodb-ops-manager`, so the connection string is:
+Configure a new Compass connection, where the username is `mongodb-ops-manager`, so the connection string is:
 
 ```
 mongodb://mongodb-ops-manager:<password>:27017/admin?authSource=admin&directConnection=true
@@ -155,7 +155,22 @@ If you are now connected to the primary, a `+` icon will appear!
 - Deploy sharded cluster
 - Deploy multi-cluster
 - Configure TLS
-- Enable backup
+- Enable backup 
+  
+     
+# Common Issues
+
+### 1. Pods get stuck at startup after restarting Docker 
+If you restart Docker and restart the containers, sometimes Pods can get stuck.  
+If this happens, try to force them to be deleted:
+
+``` 
+kubectl delete pod <pod> -n mongodb-operator --grace-period=0 --force
+```
+
+### 2. YAML changes are not taking effect
+If you restart Docker and the containers, you need to update the IP in OpsManager `API Access List`.  
+If the IP is not updated there, if you apply YAML changes, nothing will happens!
 
 
 ## References
