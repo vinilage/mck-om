@@ -121,7 +121,9 @@ Fill all the fields, and you will be redirected to the control panel web-app.
 - Deploy multi-cluster
 - Enable backup 
   
-  ## Connect to AppDB (optional)
+# Optional Steps
+
+## Connect to AppDB 
 
 In case you need to connect to AppDB with Compass, you need to:
 
