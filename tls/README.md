@@ -121,6 +121,17 @@ We basically added `.spec.security.tls.enabled: true` and the respective CA. So 
 kubectl apply -f replica-set-tls.yaml
 ```
 
+### Connect via Compass with TLS
+
+The Certificate needs to be used to connect to the replica-set via Compass now.  
+So edit your connection, go to:  
+`Advanced Connection Options` -> `TLS/SSL` -> `On` and `Select a file...` for the `Certificate Authority (.pem)`.   
+Find the `ca.pem` generated file. The connection should work!
+
+![Alt text](/img/compass-tls.png)
+
+## Enable TLS in Search
+
 Also let's enable TLS for Search:  
 
 ```
