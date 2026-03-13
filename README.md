@@ -112,7 +112,16 @@ If this is your first access with OpsManager, create a new user by clicking in S
 Fill all the fields, and you will be redirected to the control panel web-app.  
 
 
-## Connect to AppDB (optional)
+## Next steps...
+
+- [Deploy replica-set](https://github.com/vinilage/mck-om/blob/main/replica-set/README.md)
+- [Deploy Search & Vector Search](https://github.com/vinilage/mck-om/blob/main/search/README.md)
+- [Configure TLS](https://github.com/vinilage/mck-om/blob/main/tls/README.md)
+- Deploy sharded cluster
+- Deploy multi-cluster
+- Enable backup 
+  
+  ## Connect to AppDB (optional)
 
 In case you need to connect to AppDB with Compass, you need to:
 
@@ -147,16 +156,6 @@ kubectl port-forward -n mongodb-operator pod/ops-manager-db-0 27017:27017
 If you are now connected to the primary, a `+` icon will appear!  
 
 ![Alt text](/img/compass-primary.png)
-
-## Next steps...
-
-- [Deploy replica-set](https://github.com/vinilage/mck-om/blob/main/replica-set/README.md)
-- [Deploy Search & Vector Search](https://github.com/vinilage/mck-om/blob/main/search/README.md)
-- Deploy sharded cluster
-- Deploy multi-cluster
-- Configure TLS
-- Enable backup 
-  
      
 # Common Issues
 
