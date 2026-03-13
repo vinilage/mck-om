@@ -1,4 +1,4 @@
-# Enable TLS and create all the certificates
+# Enable TLS and Create All the Certificates
 
 ## What we will do:
 - Create the certificates

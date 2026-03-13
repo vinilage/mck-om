@@ -27,7 +27,7 @@ spec:
     # service‑level FQDNs
     - "replica-set-svc.mongodb-operator.svc.cluster.local"
     - "*.replica-set-svc.mongodb-operator.svc.cluster.local"
-    # localhost for testing purposes
+    # localhost for testing purposes and to connect via Compass
     - "localhost"
 
 ---
