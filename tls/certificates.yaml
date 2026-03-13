@@ -5,7 +5,7 @@ metadata:
   name: mdb-rs-server-tls
   namespace: mongodb-operator
 spec:
-  secretName: certs-mdb-rs-cert    ###### Secret 
+  secretName: certs-replica-set-cert    ###### Secret 
   issuerRef:
     name: my-ca-issuer
     kind: ClusterIssuer

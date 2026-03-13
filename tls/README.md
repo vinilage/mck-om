@@ -31,7 +31,7 @@ You should see these Pods:
 
 ![Alt text](/img/cert-manager.png)
 
-## Prepare certificate issuer and CA infrastructure
+## Prepare certificate issuer and Certificate Authority (CA)
 
 Create the certificate authority infrastructure that will issue the TLS certificates.  
 All necessary YAMLs are prepared in the `/tls` folder.  
@@ -43,7 +43,7 @@ Make sure you run all commands from `./tls/` in your shell.
 - Publish a cluster-wide CA issuer that all namespaces can use.
 - Expose the CA bundle through a ConfigMap so MongoDB resources can use it.
 
-### Create the Certificate Authority
+### Create the CA
 
 Let's create the necessary CA, Issuers and Secret:
 
@@ -59,7 +59,8 @@ This ConfigMap will be referenced in MCK CRs as the trusted CA bundle to:
 
 #### 1. Create a CA Certificate
 
-Create a CA certificate from the `root-secret` in `cert-manager` namespace to a `ca.pem` file.  
+Create a `ca.pem` file with the CA certificate.  
+It takes the certificate from `root-secret` in `cert-manager` namespace.  
 
 ```
 kubectl --context k3d-mongodb-mck-cluster \
@@ -71,12 +72,12 @@ kubectl --context k3d-mongodb-mck-cluster \
 #### 2. Create the ConfigMap
 
 The following command will:  
-- create a `replica-set-ca-configmap` config-map
-- config-map fields: `ca-pem`, `mms-ca.crt` and `ca.crt` 
+- create a `replica-set-ca-configmap` ConfigMap
+- ConfigMap fields: `ca-pem`, `mms-ca.crt` and `ca.crt` 
 - namespace: `mongodb-operator` 
-- copy the CA certificate from the `ca.pem` file to the config-map fields  
+- copy the CA certificate from the `ca.pem` file to the ConfigMap fields  
 
-An example of the config-map structure can be seen in `config-map-example.yaml`.  
+An example of the ConfigMap structure can be seen in `ConfigMap-example.yaml`.  
 
 ```
 kubectl --context "k3d-mongodb-mck-cluster" \
@@ -114,7 +115,7 @@ In K9s type `:` and `certificates`:
 ## Enable TLS in the current replica-set
 
 Now that the certificates are issued, let's enable it in the current replica-set.  
-We basically added `.spec.security.enabled: true` and the respective CA. So run:  
+We basically added `.spec.security.tls.enabled: true` and the respective CA. So run:  
 
 ```
 kubectl apply -f replica-set-tls.yaml
