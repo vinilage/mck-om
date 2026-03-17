@@ -1,0 +1,635 @@
+#!/bin/bash
+
+# Script to generate search activity for dashboard demonstration
+# This will create search indexes and run search queries on sample_mflix data to populate the metrics
+
+# Set default passwords from environment variables
+ADMIN_PASSWORD=${ADMIN_PASSWORD:-12345678}
+
+K8S_NAMESPACE=${K8S_NAMESPACE:-mongodb-operator}
+K8S_MONGOD_POD=${K8S_MONGOD_POD:-mongodb-tools-pod}
+K8S_MONGOD_CONTAINER=${K8S_MONGOD_CONTAINER:-mongodb-tools}
+K8S_MONGOSH_HOME=${K8S_MONGOSH_HOME:-/tmp}
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+run_mongosh_k8s() {
+  kubectl exec -i -n "${K8S_NAMESPACE}" "${K8S_MONGOD_POD}" -c "${K8S_MONGOD_CONTAINER}" -- env HOME="${K8S_MONGOSH_HOME}" XDG_CONFIG_HOME="${K8S_MONGOSH_HOME}" MONGOSH_CONFIG_DIR="${K8S_MONGOSH_HOME}/.mongodb" mongosh "mongodb://replica-set-0.replica-set-svc.mongodb-operator.svc.cluster.local:27017,replica-set-1.replica-set-svc.mongodb-operator.svc.cluster.local:27017,replica-set-2.replica-set-svc.mongodb-operator.svc.cluster.local:27017/?replicaSet=replica-set" --norc "$@"
+}
+
+run_mongosh_admin() {
+  run_mongosh_k8s -u mdb-admin -p "${ADMIN_PASSWORD}" --authenticationDatabase admin "$@"
+}
+
+run_mongosh_sample() {
+  run_mongosh_k8s -u mdb-admin -p "${ADMIN_PASSWORD}" --authenticationDatabase admin "$@"
+}
+
+wait_for_search_index_queryable() {
+  local db_name=$1
+  local collection_name=$2
+  local index_name=$3
+  local max_attempts=${4:-90}
+  local sleep_seconds=${5:-2}
+
+  echo "⏳ Waiting for search index ${db_name}.${collection_name}.${index_name} to become queryable..."
+
+  for ((attempt=1; attempt<=max_attempts; attempt++)); do
+    status=$(run_mongosh_admin --quiet --eval "
+    try {
+      const dbi = db.getSiblingDB('${db_name}');
+      const res = dbi.getCollection('${collection_name}').aggregate([
+        { \$listSearchIndexes: { name: '${index_name}' } }
+      ]).toArray();
+
+      if (!res || res.length === 0) {
+        print('MISSING');
+      } else {
+        const idx = res[0];
+        if (idx.status === 'READY') {
+          print('READY');
+        } else {
+          print(idx.status || 'WAITING');
+        }
+      }
+    } catch (e) {
+      print('ERROR');
+    }
+    " 2>/dev/null | tail -n 1 | tr -d '\r')
+
+    if [ "${status}" = "READY" ]; then
+      echo "✅ Search index ${index_name} is queryable"
+      return 0
+    fi
+
+    if [ "${attempt}" -eq 1 ] || [ $((attempt % 10)) -eq 0 ]; then
+      echo "   ...still waiting for ${index_name} (status: ${status:-unknown}, attempt ${attempt}/${max_attempts})"
+    fi
+
+    if [ "${attempt}" -eq "${max_attempts}" ]; then
+      echo "⚠️  Timed out waiting for ${index_name}. Last status: ${status:-unknown}. Continuing..."
+      return 1
+    fi
+
+    sleep "${sleep_seconds}"
+  done
+}
+
+echo "🔍 Generating Search Activity for Dashboard Demo..."
+echo "=================================================="
+
+# Start tools pod if not already running
+if ! kubectl get pod -n "${K8S_NAMESPACE}" "${K8S_MONGOD_POD}" >/dev/null 2>&1; then
+  echo "🚀 Starting MongoDB tools pod for query execution..."
+  cd ../search
+  kubectl apply -f mongodb-tools.yaml -n "${K8S_NAMESPACE}"
+  echo "⏳ Waiting for tools pod to be ready..."
+  kubectl wait -n "${K8S_NAMESPACE}" --for=condition=Ready pod/"${K8S_MONGOD_POD}" --timeout=120s
+fi
+
+# Check if MongoDB is accessible
+if ! run_mongosh_admin --eval "db.adminCommand('ping')" >/dev/null 2>&1; then
+  echo "❌ MongoDB is not accessible via kubectl exec"
+  echo "   Namespace: ${K8S_NAMESPACE}, Pod: ${K8S_MONGOD_POD}, Container: ${K8S_MONGOD_CONTAINER}"
+  exit 1
+fi
+
+echo "✅ MongoDB is accessible"
+
+# Check if we have sample data
+echo -n "Checking for sample data... "
+DB_COUNT_RAW=$(run_mongosh_admin --eval "print(db.adminCommand('listDatabases').databases.filter(d => d.name.startsWith('sample')).length)" --quiet)
+DB_COUNT=$(printf '%s\n' "${DB_COUNT_RAW}" | tr -dc '0-9')
+if [ -z "${DB_COUNT}" ]; then
+  DB_COUNT=0
+fi
+if [ "$DB_COUNT" -gt 0 ]; then
+  echo "✅ Found $DB_COUNT sample database(s)"
+else
+  echo "⚠️  No sample databases found. Some queries may not work."
+fi
+
+# Create search indexes on the sample databases if they exist
+echo ""
+echo "📊 Creating search indexes..."
+run_mongosh_admin --eval "
+try {
+  const dbs = db.adminCommand('listDatabases').databases.map(d => d.name);
+  
+  // Create text search index on sample_mflix.embedded_movies
+  if (dbs.includes('sample_mflix')) {
+    db = db.getSiblingDB('sample_mflix');
+    
+    // Check if movies collection has a search index with autocomplete
+    try {
+      const moviesIndexes = db.embedded_movies.getSearchIndexes();
+      const textIndexExists = moviesIndexes.some(idx => idx.name === 'text_index');
+      
+      if (!textIndexExists) {
+        db.embedded_movies.createSearchIndex(
+          'text_index',
+          {
+            'mappings': {
+              'dynamic': true,
+              'fields': {
+                'title': [
+                  {
+                    'type': 'string',
+                    'analyzer': 'lucene.standard'
+                  },
+                  {
+                    'type': 'autocomplete',
+                    'analyzer': 'lucene.standard',
+                    'tokenization': 'edgeGram',
+                    'minGrams': 3,
+                    'maxGrams': 15,
+                    'foldDiacritics': false
+                  }
+                ],
+                'plot_embedding_voyage_3_large': {
+                  'type': 'vector',
+                  'numDimensions': 2048,
+                  'similarity': 'dotProduct'
+                }
+              }
+            }
+          }
+        );
+        print('✅ Text search index created on sample_mflix.embedded_movies with autocomplete on title and vector on plot_embedding_voyage_3_large');
+      } else {
+        print('✅ Text search index already exists on sample_mflix.embedded_movies');
+      }
+    } catch (e) {
+      print('ℹ️  Note: Text search index creation failed: ' + e.message);
+    }
+    
+    // Check if embedded_movies collection has a vector search index
+    try {
+      const embeddedIndexes = db.embedded_movies.getSearchIndexes();
+      const vectorIndexExists = embeddedIndexes.some(idx => idx.name === 'vector_index');
+
+      if (!vectorIndexExists) {
+        db.embedded_movies.createSearchIndex(
+          {
+            'name': 'vector_index',
+            'type':'vectorSearch',
+            'definition':{
+              'fields': [
+                {
+                  'type': 'vector',
+                  'path': 'plot_embedding_voyage_3_large',
+                  'numDimensions': 2048,
+                  'similarity': 'dotProduct'
+                }
+              ]
+            }
+          }
+        );
+        print('✅ Vector search index created on sample_mflix.embedded_movies');
+      } else {
+        print('✅ Vector search index already exists on sample_mflix.embedded_movies');
+      }
+      
+    } catch (e) {
+      print('ℹ️  Note: Vector search index creation failed: ' + e.message);
+    }
+  } else {
+    print('ℹ️  sample_mflix database not found. Skipping movie index creation.');
+  }
+} catch (e) {
+  print('Error: ' + e);
+}" --quiet
+
+# TODO: Re-enable this readiness check when MongoDB Community consistently
+# returns index status/queryable fields for $listSearchIndexes.
+# if run_mongosh_admin --quiet --eval "print(db.adminCommand('listDatabases').databases.some(d => d.name === 'sample_mflix') ? '1' : '0')" | grep -q "1"; then
+#   wait_for_search_index_queryable "sample_mflix" "embedded_movies" "text_index"
+#   wait_for_search_index_queryable "sample_mflix" "embedded_movies" "vector_index"
+# fi
+
+echo ""
+echo "🔍 Running search queries to generate metrics..."
+
+# Run diverse movie search queries to populate the new metrics
+echo "Running diverse movie search queries with different limits and parameters..."
+
+# Define different query variations to populate metrics using movie data
+QUERIES=(
+  # Small limit queries (will affect limitPerQuery metric)
+  "action:5"
+  "comedy:3"
+  "drama:2"
+  # Medium limit queries  
+  "adventure:15"
+  "thriller:20"
+  "romance:25"
+  # Larger limit queries (will affect batchDataSize and numCandidatesPerQuery)
+  "fantasy:50"
+  "science:75"
+  "mystery:100"
+  # Compound searches (more candidates)
+  "action AND adventure:30"
+  "comedy OR romance:40"
+)
+
+for i in "${!QUERIES[@]}"; do
+  IFS=':' read -r query limit <<< "${QUERIES[$i]}"
+  echo "Running search query $((i+1))/${#QUERIES[@]}: '$query' with limit $limit..."
+  
+  run_mongosh_admin --eval "
+  try {
+    db = db.getSiblingDB('sample_mflix');
+    if (db.embedded_movies.countDocuments() > 0) {
+      // Run text search with varying limits to populate metrics
+      const result = db.embedded_movies.aggregate([
+        {
+          \$search: {
+            index: 'text_index',
+            text: {
+              query: '$query',
+              path: ['title', 'plot', 'genres', 'cast', 'directors']
+            }
+          }
+        },
+        { \$limit: $limit },
+        { \$project: { 
+            title: 1, 
+            year: 1,
+            genres: 1,
+            cast: 1,
+            plot: 1,
+            score: { \$meta: 'searchScore' }
+          } 
+        }
+      ]).toArray();
+      print('Search query \"$query\" executed successfully, returned ' + result.length + ' documents');
+      if (result.length > 0) {
+        print('  Top result: ' + result[0].title + ' (' + (result[0].year || 'Unknown year') + ')');
+      }
+    } else {
+      print('No documents found in sample_mflix.embedded_movies');
+    }
+  } catch (e) {
+    print('Search query failed (this is normal if mongot is still initializing): ' + e.message);
+  }" --quiet 2>/dev/null
+  
+  sleep 1
+done
+
+echo ""
+echo "🎬 Running movie text search queries to test the new search index..."
+
+# Run text searches on the movies collection using the new text index
+MOVIE_QUERIES=(
+  "action:10"
+  "adventure:15" 
+  "comedy:20"
+  "drama:25"
+  "thriller:30"
+  "romance:12"
+  "horror:8"
+  "fantasy:18"
+)
+
+for query_config in "${MOVIE_QUERIES[@]}"; do
+  IFS=':' read -r query limit <<< "$query_config"
+  echo "Running movie search: '$query' with limit $limit..."
+  
+  run_mongosh_admin --eval "
+  try {
+    db = db.getSiblingDB('sample_mflix');
+    if (db.embedded_movies.countDocuments() > 0) {
+      // Run text search on movies
+      const result = db.embedded_movies.aggregate([
+        {
+          \$search: {
+            index: 'text_index',
+            text: {
+              query: '$query',
+              path: ['title', 'plot', 'genres', 'cast', 'directors']
+            }
+          }
+        },
+        { \$limit: $limit },
+        { \$project: { 
+            title: 1, 
+            year: 1,
+            genres: 1,
+            cast: 1,
+            plot: 1,
+            score: { \$meta: 'searchScore' }
+          } 
+        }
+      ]).toArray();
+      print('Movie search \"$query\" executed successfully, returned ' + result.length + ' documents');
+      if (result.length > 0) {
+        print('  Top result: ' + result[0].title + ' (' + (result[0].year || 'Unknown year') + ')');
+      }
+    } else {
+      print('No documents found in sample_mflix.embedded_movies');
+    }
+  } catch (e) {
+    print('Movie search query failed: ' + e.message);
+  }" --quiet 2>/dev/null
+  
+  sleep 1
+done
+
+echo ""
+echo "🔤 Running autocomplete search queries..."
+
+# Test autocomplete functionality
+AUTOCOMPLETE_QUERIES=("star" "the" "love" "war" "dark" "super")
+
+for query in "${AUTOCOMPLETE_QUERIES[@]}"; do
+  echo "Running autocomplete search for: '$query'..."
+  
+  run_mongosh_admin --eval "
+  try {
+    db = db.getSiblingDB('sample_mflix');
+    if (db.embedded_movies.countDocuments() > 0) {
+      // Run autocomplete search
+      const result = db.embedded_movies.aggregate([
+        {
+          \$search: {
+            index: 'text_index',
+            autocomplete: {
+              query: '$query',
+              path: 'title'
+            }
+          }
+        },
+        { \$limit: 10 },
+        { \$project: { 
+            title: 1, 
+            year: 1,
+            score: { \$meta: 'searchScore' }
+          } 
+        }
+      ]).toArray();
+      print('Autocomplete search \"$query\" executed successfully, returned ' + result.length + ' documents');
+      if (result.length > 0) {
+        print('  Suggestions: ' + result.slice(0, 3).map(r => r.title).join(', '));
+      }
+    }
+  } catch (e) {
+    print('Autocomplete search query failed: ' + e.message);
+  }" --quiet 2>/dev/null
+  
+  sleep 1
+done;
+
+echo ""
+echo "🔍 Running additional search variations to generate more metric data..."
+
+# Run some faceted searches and compound queries to generate diverse metrics
+for i in {1..3}; do
+  echo "Running complex search query $i/3..."
+  
+  run_mongosh_admin --eval "
+  try {
+    db = db.getSiblingDB('sample_mflix');
+    if (db.embedded_movies.countDocuments() > 0) {
+      // Run compound movie search (generates more candidate evaluation)
+      const result = db.embedded_movies.aggregate([
+        {
+          \$search: {
+            index: 'text_index',
+            compound: {
+              must: [
+                {
+                  text: {
+                    query: 'adventure',
+                    path: ['title', 'plot']
+                  }
+                }
+              ],
+              should: [
+                {
+                  text: {
+                    query: 'action',
+                    path: ['genres']
+                  }
+                },
+                {
+                  range: {
+                    path: 'year',
+                    gte: 2000,
+                    lte: 2020
+                  }
+                }
+              ]
+            }
+          }
+        },
+        { \$limit: $((20 + i * 10)) },
+        { \$project: { 
+            title: 1, 
+            year: 1,
+            genres: 1,
+            cast: 1,
+            plot: 1,
+            score: { \$meta: 'searchScore' }
+          } 
+        }
+      ]).toArray();
+      print('Complex search query executed, returned ' + result.length + ' documents');
+      if (result.length > 0) {
+        print('  Top result: ' + result[0].title + ' (' + (result[0].year || 'Unknown year') + ')');
+      }
+    } else {
+      print('No documents found in sample_mflix.embedded_movies');
+    }
+  } catch (e) {
+    print('Complex search query failed: ' + e.message);
+  }" --quiet 2>/dev/null
+  
+  sleep 2
+done
+
+echo ""
+echo "🔬 Running \$search.vectorSearch queries to populate candidates and limit metrics..."
+
+# Run vector search queries with different limits and parameters in a single session
+run_mongosh_sample --eval "
+db = db.getSiblingDB('sample_mflix');
+// Get a few random movie plot embeddings for vector search queries
+print('Getting sample embeddings for vector search...');
+const sampleMovies = db.embedded_movies.aggregate([
+  { \$sample: { size: 5 } },
+  { \$project: { title: 1, plot_embedding_voyage_3_large: 1 } }
+]).toArray();
+
+print('✅ Retrieved ' + sampleMovies.length + ' sample embeddings for vector search');
+sampleMovies.forEach(movie => print('  - ' + movie.title));
+
+if (sampleMovies.length > 0) {
+  const vectorLimits = [10, 25, 50, 100, 150];
+  
+  for (let i = 0; i < vectorLimits.length; i++) {
+    const limit = vectorLimits[i];
+    const queryMovie = sampleMovies[i % sampleMovies.length];
+    
+    if (queryMovie.plot_embedding_voyage_3_large) {
+      print('Running vectorSearch query ' + (i+1) + '/' + vectorLimits.length + ' with limit ' + limit + '...');
+      
+      try {
+        const result = db.embedded_movies.aggregate([
+          {
+            \$search: {
+              index: 'text_index',
+              vectorSearch: {
+                queryVector: Array.from(queryMovie.plot_embedding_voyage_3_large.toFloat32Array()),
+                path: 'plot_embedding_voyage_3_large',
+                limit: limit,
+                numCandidates: limit * 2
+              }
+            }
+          },
+          {
+            \$project: {
+              title: 1,
+              year: 1,
+              genres: 1,
+              score: { \$meta: 'searchScore' }
+            }
+          }
+        ]).toArray();
+        
+        print('  ✅ vectorSearch with limit ' + limit + ' (candidates: ' + (limit * 2) + ') executed, returned ' + result.length + ' documents');
+        if (result.length > 0) {
+          print('    Best match: ' + result[0].title + ' (score: ' + result[0].score.toFixed(4) + ')');
+        }
+      } catch (e) {
+        print('  ❌ vectorSearch query failed: ' + e.message);
+      }
+    } else {
+      print('  ⚠️  No embedding found for movie: ' + queryMovie.title);
+    }
+  }
+} else {
+  print('❌ No sample movies found for vector search');
+}
+" --quiet
+
+echo ""
+echo "🔬 Running equivalent \$vectorSearch queries with different limits..."
+
+# Run $vectorSearch queries with different limits and parameters in a single session
+run_mongosh_sample --eval "
+db = db.getSiblingDB('sample_mflix');
+// Get a few random movie plot embeddings for vector search queries
+print('Getting sample embeddings for \$vectorSearch...');
+const sampleMovies = db.embedded_movies.aggregate([
+  { \$sample: { size: 5 } },
+  { \$project: { title: 1, plot_embedding_voyage_3_large: 1 } }
+]).toArray();
+
+print('✅ Retrieved ' + sampleMovies.length + ' sample embeddings for \$vectorSearch');
+sampleMovies.forEach(movie => print('  - ' + movie.title));
+
+if (sampleMovies.length > 0) {
+  const vectorLimits = [10, 25, 50, 100, 150];
+  
+  for (let i = 0; i < vectorLimits.length; i++) {
+    const limit = vectorLimits[i];
+    const queryMovie = sampleMovies[i % sampleMovies.length];
+    
+    if (queryMovie.plot_embedding_voyage_3_large) {
+      print('Running \$vectorSearch query ' + (i+1) + '/' + vectorLimits.length + ' with limit ' + limit + '...');
+      
+      try {
+        const result = db.embedded_movies.aggregate([
+          {
+            \$vectorSearch: {
+              index: 'vector_index',
+              path: 'plot_embedding_voyage_3_large',
+              queryVector: queryMovie.plot_embedding_voyage_3_large,
+              numCandidates: limit * 2,
+              limit: limit
+            }
+          },
+          {
+            \$project: {
+              title: 1,
+              year: 1,
+              genres: 1,
+              score: { \$meta: 'vectorSearchScore' }
+            }
+          }
+        ]).toArray();
+        
+        print('  ✅ \$vectorSearch with limit ' + limit + ' (candidates: ' + (limit * 2) + ') executed, returned ' + result.length + ' documents');
+        if (result.length > 0) {
+          print('    Best match: ' + result[0].title + ' (score: ' + result[0].score.toFixed(4) + ')');
+        }
+      } catch (e) {
+        print('  ❌ \$vectorSearch query failed: ' + e.message);
+      }
+    } else {
+      print('  ⚠️  No embedding found for movie: ' + queryMovie.title);
+    }
+  }
+} else {
+  print('❌ No sample movies found for \$vectorSearch');
+}
+" --quiet
+
+echo ""
+echo "🎯 Running additional \$vectorSearch variations with higher k values..."
+
+# Run some vectorSearch queries with much higher k values to really populate the metrics
+run_mongosh_sample --eval "
+db = db.getSiblingDB('sample_mflix');
+// Get a sample movie embedding for high-candidate vector searches
+const sampleMovie = db.embedded_movies.findOne({plot_embedding_voyage_3_large: {\$exists: true}});
+
+if (sampleMovie && sampleMovie.plot_embedding_voyage_3_large) {
+  print('Using embedding from: ' + sampleMovie.title);
+  
+  const highCandidateConfigs = [
+    {limit: 20, k: 200},
+    {limit: 30, k: 500},
+    {limit: 50, k: 1000},
+    {limit: 75, k: 1500}
+  ];
+  
+  for (let i = 0; i < highCandidateConfigs.length; i++) {
+    const config = highCandidateConfigs[i];
+    print('Running high-k vectorSearch query: limit=' + config.limit + ', numCandidates=' + config.k + '...');
+    
+    try {
+      const result = db.embedded_movies.aggregate([
+        {
+          \$vectorSearch: {
+            index: 'vector_index',
+            
+            queryVector: Array.from(sampleMovie.plot_embedding_voyage_3_large.toFloat32Array()),
+            path: 'plot_embedding_voyage_3_large',
+            limit: config.limit,
+            numCandidates: config.k
+          }
+        },
+        {
+          \$project: {
+            title: 1,
+            year: 1,
+            plot: 1,
+            score: { \$meta: 'vectorSearchScore' }
+          }
+        }
+      ]).toArray();
+      
+      print('  ✅ High-k vectorSearch query returned ' + result.length + ' documents');
+      if (result.length > 0) {
+        print('    Best match: ' + result[0].title + ' (score: ' + result[0].score.toFixed(4) + ')');
+      }
+    } catch (e) {
+      print('  ❌ High-k vectorSearch query failed: ' + e.message);
+    }
+  }
+} else {
+  print('❌ No movies with embeddings found for high-candidate vector search');
+}
+" --quiet
