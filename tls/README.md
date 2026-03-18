@@ -11,6 +11,11 @@ If you've followed [these steps](https://github.com/vinilage/mck-om/tree/main) y
 - [A replica-set deployed](https://github.com/vinilage/mck-om/blob/main/replica-set/README.md) 
 - [SCRUM authentication enabled and database users created](https://github.com/vinilage/mck-om/blob/main/user/README.md)
 
+## Important
+
+Currently it is not possible to disable TLS via MCK after it was enabled.  
+We are discussing about this internally, so be sure about enabling it.  
+
 ## Install cert-manager
 
 To install `cert-manager` in the `cert-manager` namespace, run the following (it can take some time):

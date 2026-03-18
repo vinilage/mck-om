@@ -116,7 +116,7 @@ Fill all the fields, and you will be redirected to the control panel web-app.
 
 - [Deploy replica-set](https://github.com/vinilage/mck-om/blob/main/replica-set/README.md)
 - [Deploy Search & Vector Search](https://github.com/vinilage/mck-om/blob/main/search/README.md)
-- [Configure TLS](https://github.com/vinilage/mck-om/blob/main/tls/README.md)
+- [Enable TLS](https://github.com/vinilage/mck-om/blob/main/tls/README.md)
 - Deploy sharded cluster
 - Deploy multi-cluster
 - Enable backup 
