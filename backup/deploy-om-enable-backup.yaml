@@ -1,0 +1,139 @@
+apiVersion: mongodb.com/v1
+kind: MongoDBOpsManager
+metadata:
+  name: ops-manager
+  namespace: mongodb-operator
+spec:
+  version: "8.0.18"
+  adminCredentials: om-admin-secret
+
+  externalConnectivity:
+    type: LoadBalancer
+
+  configuration:
+    mms.ignoreInitialUiSetup: "true"
+    automation.versions.source: remote
+    mms.adminEmailAddr: support@example.com
+    mms.fromEmailAddr: support@example.com
+    mms.replyToEmailAddr: support@example.com
+    mms.mail.hostname: example.com
+    mms.mail.port: "465"
+    mms.mail.ssl: "false"
+    mms.mail.transport: smtp
+
+  applicationDatabase:
+    members: 3
+    version: "8.2.0"
+
+  # Mount snapshot-store PVC into the Ops Manager pod
+  statefulSet:
+    spec:
+      template:
+        spec:
+          volumes:
+            - name: snapshot-store
+              persistentVolumeClaim:
+                claimName: snapshot-store-ops-manager
+          containers:
+            - name: mongodb-ops-manager
+              volumeMounts:
+                - name: snapshot-store
+                  mountPath: /snapshot_store
+
+  backup:
+    enabled: true
+
+    # File system and oplog store configuration
+    fileSystemStores:
+      - name: filesystem1
+    assignmentLabels: ["my-label-for-backup"]
+    opLogStores:
+      - name: oplog1
+        mongodbResourceRef:
+          name: oplog-db
+        mongodbUserRef:
+          name: mdb-user-backup
+        assignmentLabels: ["my-label-for-backup"]
+
+    # Mount the same PVC into the backup daemon pod
+    statefulSet:
+      spec:
+        template:
+          spec:
+            volumes:
+              - name: snapshot-store
+                persistentVolumeClaim:
+                  claimName: snapshot-store-ops-manager
+            containers:
+              - name: mongodb-backup-daemon
+                volumeMounts:
+                  - name: snapshot-store
+                    mountPath: /snapshot_store
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: snapshot-store-ops-manager
+  namespace: mongodb-operator
+spec:
+  storageClassName: local-path # provisioned locally by K3d
+  accessModes:
+    - ReadWriteOnce # K3d only supports ReadWriteOnce access mode for local-path storage class
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
+apiVersion: mongodb.com/v1
+kind: MongoDB
+metadata:
+  name: oplog-db
+  namespace: mongodb-operator
+spec:
+  type: ReplicaSet
+  members: 3
+  version: "8.2.0-ent"
+  persistent: true
+  # OpsManager Config
+  opsManager:
+    configMapRef:
+      name: my-project
+  credentials: organization-secret
+  security:
+    authentication:
+      enabled: true
+      ignoreUnknownUsers: true
+      modes:
+      - SCRAM
+
+---
+
+apiVersion: mongodb.com/v1
+kind: MongoDBUser
+metadata:
+  name: mdb-user-backup
+  namespace: mongodb-operator
+spec:
+  username: mdb-user-backup
+  db: admin
+  mongodbResourceRef:
+    name: oplog-db
+  passwordSecretKeyRef:
+    name: mdb-user-backup-password
+    key: password
+  roles:
+  - name: root
+    db: admin
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mdb-user-backup-password
+  namespace: mongodb-operator
+stringData:
+  password: "12345678"

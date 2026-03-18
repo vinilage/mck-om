@@ -1,0 +1,18 @@
+---
+apiVersion: mongodb.com/v1
+kind: MongoDB
+metadata:
+  name: sharded-cluster
+  namespace: mongodb-operator
+spec:
+  type: ShardedCluster
+  persistent: true
+  shardCount: 2
+  mongodsPerShardCount: 3
+  mongosCount: 2
+  configServerCount: 3
+  version: "8.2.0-ent"
+  opsManager:
+    configMapRef:
+      name: my-project
+  credentials: organization-secret
