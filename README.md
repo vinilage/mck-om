@@ -4,6 +4,10 @@ Using MongoDB Controllers for Kubernetes (MCK) to deploy MongoDB, Ops Manager an
 This is an opinionated, non-production tutorial aiming to PoC the main EA components locally.  
 Feel free to clone this repo and to apply changes as you prefer.  
 
+## Disclaimer
+
+This software is not supported by MongoDB, Inc under any of their commercial support subscriptions or otherwise. Any usage of this tool is at your own risk. It's intended only to serve as a quick test/reproduction environment.
+
 ## Prerequisities
 
 - [Git](https://git-scm.com/install/) for cloning this repo and execute the commands.
