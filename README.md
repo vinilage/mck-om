@@ -24,8 +24,9 @@ After installing all the tools, we will:
 - create a local Kubernetes cluster with K3d.
 - install the Operator (MCK).
 - deploy OpsManager with AppDB (3 members).
-- deploy a MongoDB replica-set (3 members) with and without auth.
+- deploy a MongoDB replica-set (3 members) with and without SCRAM auth.
 - deploy `Search` and create Search & Vector Search indexes.
+- enable TLS and create the certificates
 
 This is an opinionated guide, we will always use:  
 - namespace: `mongodb-operator`
