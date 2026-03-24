@@ -58,12 +58,16 @@ Verify the new cluster by running ``kubectl get nodes`` command or with `k9s`.
 
 ## Install the operator
 
-To install the MongoDB Controllers for Kubernetes (enterprise) run:
+To install the MongoDB Controllers for Kubernetes (enterprise) in `dev` mode run:
 
 ```
 helm repo add mongodb https://mongodb.github.io/helm-charts
 helm repo update
-helm install kubernetes-operator mongodb/mongodb-kubernetes --namespace mongodb-operator --create-namespace
+
+helm install kubernetes-operator mongodb/mongodb-kubernetes \
+  --namespace mongodb-operator \
+  --create-namespace \
+  --set operator.env=dev \
 ```
 
 This will install the latest version of the MCK operator via Helm.  
@@ -180,10 +184,24 @@ If you restart Docker, you need to update the MCK's IP in OpsManager's `API Acce
 The steps are described above!  
 If the IP is not updated, the YAML changes will not take effect.  
 
-
 ### 3. Read Opaque Secrets with K9s
 Usually the secrets are type opaque.  
 To read them easily via K9s: `:` -> `secrets` -> select the opaque secret and press `x`.
+
+### 4. See All Networking Info
+Set the environment variable `OM_DEBUG_HTTP=true` to the Operator deployment.
+
+```
+helm upgrade kubernetes-operator mongodb/mongodb-kubernetes \
+  --namespace mongodb-operator \
+  --reuse-values \
+  --set operator.additionalEnv[0].name="OM_DEBUG_HTTP" \
+  --set operator.additionalEnv[0].value="true"
+```
+
+### 5. Better logs with K9s
+To open logs with K9s, you press `L` and to format them better press `w`.  
+The logs of the Operator are in the `deployment`, you can: `:` -> `deploy` -> `l` -> `w`.
 
 
 ## References
