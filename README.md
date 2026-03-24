@@ -67,7 +67,7 @@ helm repo update
 helm install kubernetes-operator mongodb/mongodb-kubernetes \
   --namespace mongodb-operator \
   --create-namespace \
-  --set operator.env=dev \
+  --set operator.env=dev
 ```
 
 This will install the latest version of the MCK operator via Helm.  
