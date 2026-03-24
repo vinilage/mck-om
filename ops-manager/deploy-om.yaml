@@ -24,6 +24,9 @@ spec:
 
 ---
 
+# This is a Global Owner User used basically only for the initial setup of Ops Manager.
+# It is not recommended to use this user for daily operations
+# For deploying MongoDB resources, an API Key needs to be created in OM UI (e.g. replica-set/secret.yaml)
 apiVersion: v1
 kind: Secret
 metadata:
