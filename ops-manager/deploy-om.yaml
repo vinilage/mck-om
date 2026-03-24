@@ -34,7 +34,7 @@ metadata:
   namespace: mongodb-operator
 type: Opaque
 stringData:
-  Username: "my-om-admin-user"
-  Password: "ldsflkh@#!@asd42" # Use a strong password here or OM will not start monitoring for AppDB
-  FirstName: ""
-  LastName: ""
+  Username: "om-admin"
+  Password: "ldsflkh@#!@asd42" # strong password needed or OM will not start monitoring for AppDB
+  FirstName: "Administrator" # cannot be empty or MCK will not be able to create
+  LastName: "Ops Manager"  # cannot be empty or MCK will not be able to create
