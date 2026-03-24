@@ -165,7 +165,7 @@ If you are now connected to the primary, a `+` icon will appear!
 
 ![Alt text](/img/compass-primary.png)
      
-# Common Issues
+# Common Issues and Hints
 
 ### 1. Pods get stuck at startup after restarting Docker 
 If you restart Docker and restart the containers, sometimes Pods can get stuck.  
@@ -179,6 +179,11 @@ kubectl delete pod <pod> -n mongodb-operator --grace-period=0 --force
 If you restart Docker, you need to update the MCK's IP in OpsManager's `API Access List`.  
 The steps are described above!  
 If the IP is not updated, the YAML changes will not take effect.  
+
+
+### 3. Read Opaque Secrets with K9s
+Usually the secrets are type opaque.  
+To read them easily via K9s: `:` -> `secrets` -> select the opaque secret and press `x`.
 
 
 ## References
