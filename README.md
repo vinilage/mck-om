@@ -203,6 +203,35 @@ helm upgrade kubernetes-operator mongodb/mongodb-kubernetes \
 To open logs with K9s, you press `L` and to format them better press `w`.  
 The logs of the Operator are in the `deployment`, you can: `:` -> `deploy` -> `l` -> `w`.
 
+### 6. Restoring sample data with TLS via mongodb-tools
+
+In case you have enabled TLS before importing the sample data to the database.  
+First copy the `ca.pem` file from the laptop to the Pod:  
+```
+kubectl cp <your directory>/mck-om/tls/ca.pem \
+  mongodb-operator/mongodb-tools-pod:/tmp/ca.pem \
+  --context k3d-mongodb-mck-cluster
+```
+
+Restoring data from inside of the Pod using the TLS certificate:  
+```
+mongorestore \
+  --uri="mongodb://mdb-admin:12345678@replica-set-svc.mongodb-operator.svc.cluster.local:27017/?replicaSet=replica-set&authSource=admin&tls=true&tlsCAFile=/tmp/ca.pem" \
+  --archive=/tmp/sample_mflix.archive \
+  --nsInclude 'sample_mflix.*'
+```
+
+Create Search index if TLS is enabled:  
+``` 
+mongosh \
+  --username mdb-admin \
+  --password 12345678 \
+  --authenticationDatabase admin \
+  --tls \
+  --tlsCAFile /tmp/ca.pem \
+  "mongodb://replica-set-0.replica-set-svc.mongodb-operator.svc.cluster.local:27017,replica-set-1.replica-set-svc.mongodb-operator.svc.cluster.local:27017,replica-set-2.replica-set-svc.mongodb-operator.svc.cluster.local:27017/?replicaSet=replica-set"
+```
+
 
 ## References
 

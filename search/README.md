@@ -16,7 +16,10 @@ Go to `./search/` and run:
 kubectl apply -f mongodb-tools.yaml
 ```
 
-Connect to the newly created `mongodb-tools-pod` to execute commands via Shell:
+Connect to the newly created `mongodb-tools-pod` to execute commands via Shell.  
+You can use `K9s` by clicking in the `mongodb-tools-pod` and then `s` to open Shell.  
+
+Or you can execute:  
 
 ```
 kubectl exec -n mongodb-operator -it mongodb-tools-pod -- sh
