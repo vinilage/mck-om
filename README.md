@@ -18,6 +18,10 @@ This software is not supported by MongoDB, Inc under any of their commercial sup
 - [K3d](https://k3d.io/stable/) to create local Kubernetes clusters.
 - [K9s](https://k9scli.io/) to manage your local clusters (optional but recommended).
 
+## Notes
+
+- Want to use Podman instead of Docker? Follow this guide for [configuring Podman on macOS]("https://github.com/vinilage/mck-om/blob/main/docs/macOS_podman.md").
+
 
 ## Summary of what we will do
 After installing all the tools, we will:  
