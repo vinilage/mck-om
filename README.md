@@ -20,7 +20,7 @@ This software is not supported by MongoDB, Inc under any of their commercial sup
 
 ## Notes
 
-- Want to use Podman instead of Docker? Follow this guide for [configuring Podman on macOS]("./blob/main/docs/macOS_podman.md").
+- Want to use Podman instead of Docker? Follow this guide for [configuring Podman on macOS]("https://github.com/vinilage/mck-om/blob/main/docs/macOS_podman.md").
 
 
 ## Summary of what we will do
