@@ -17,6 +17,13 @@ This software is not supported by MongoDB, Inc under any of their commercial sup
 - [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/) to run commands against Kubernetes clusters.
 - [K3d](https://k3d.io/stable/) to create local Kubernetes clusters.
 - [K9s](https://k9scli.io/) to manage your local clusters (optional but recommended).
+- [helm](https://helm.sh/) to install the MCK
+
+Deploying on macOS? Here's the homebrew command to install (almost) all necessary dependencies:
+```shell
+brew install git mongosh kubectl k3d k9s helm
+```
+You'll still need to install Docker (or podman, see next section).
 
 ## Notes
 
