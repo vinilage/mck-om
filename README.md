@@ -22,6 +22,9 @@ This software is not supported by MongoDB, Inc under any of their commercial sup
 Deploying on macOS? Here's the homebrew command to install (almost) all necessary dependencies:
 ```shell
 brew install git mongosh kubectl k3d k9s helm
+
+# Install Compass (optional) if you prefer a GUI to the MongoDB Shell
+brew install --cask mongodb-compass
 ```
 You'll still need to install Docker (or podman, see next section).
 
