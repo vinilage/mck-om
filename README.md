@@ -172,18 +172,26 @@ kubectl port-forward -n mongodb-operator pod/ops-manager-db-0 27017:27017
 If you are now connected to the primary, a `+` icon will appear!  
 
 ![Alt text](/img/compass-primary.png)
+
      
 # Common Issues and Hints
 
-### 1. Pods get stuck at startup after restarting Docker or Laptop
-If you restart Docker and restart the containers, sometimes Pods can get stuck.  
-If this happens:
+### 1. Start your cluster after restarting your laptop or Docker
+If you restart your laptop or Docker, you need to start the K3d containers.  
+By doing this, you don't need to follow all steps again.  
+After few minutes, your Kubernetes cluster will start as it was before.  
 
-#### Add the new Operator IP to Access List
-If you restart your laptop or Docker, the Operator's IP may change.  
+Open your Docker desktop, and `start all 3 K3d related containers` manually.    
+
+![Alt text](/img/docker-start-containers.png)
+
+#### Add the new Operator's IP to OM's Access List
+If you restart your laptop or Docker, the Operator's IP might have changed.  
 In this case, you need to [add the new IP](https://github.com/vinilage/mck-om/blob/main/replica-set/README.md#configuring-ops-manager-and-mck) to OpsManager's Access List.
 
-### Force deletion of the failing Pods
+### 2. Pods get stuck at startup after restarting Docker or Laptop
+If you restart Docker and restart the containers, sometimes Pods can get stuck.  
+First, make sure the Operator IP is added to the Access List in OpsManager.  
 If adding the IP doesn't fix the issue after few minutes, do the following.  
 Force the failing Pods to be deleted, so they are re-created:
 
@@ -191,16 +199,16 @@ Force the failing Pods to be deleted, so they are re-created:
 kubectl delete pod <pod> -n mongodb-operator --grace-period=0 --force
 ```
 
-### 2. YAML changes are not taking effect
+### 3. YAML changes are not taking effect
 If you restart Docker, you need to update the MCK's IP in OpsManager's `API Access List`.  
 The steps are described above!  
 If the IP is not updated, the YAML changes will not take effect.  
 
-### 3. Read Opaque Secrets with K9s
+### 4. Read Opaque Secrets with K9s
 Usually the secrets are type opaque.  
 To read them easily via K9s: `:` -> `secrets` -> select the opaque secret and press `x`.
 
-### 4. See All Networking Info
+### 5. See All Networking Info
 Set the environment variable `OM_DEBUG_HTTP=true` to the Operator deployment.
 
 ```
@@ -211,11 +219,11 @@ helm upgrade kubernetes-operator mongodb/mongodb-kubernetes \
   --set operator.additionalEnv[0].value="true"
 ```
 
-### 5. Better logs with K9s
+### 6. Better logs with K9s
 To open logs with K9s, you press `L` and to format them better press `w`.  
 The logs of the Operator are in the `deployment`, you can: `:` -> `deploy` -> `l` -> `w`.
 
-### 6. Restoring sample data with TLS via mongodb-tools
+### 7. Restoring sample data with TLS via mongodb-tools
 
 In case you have enabled TLS before importing the sample data to the database.  
 First copy the `ca.pem` file from the laptop to the Pod:  
