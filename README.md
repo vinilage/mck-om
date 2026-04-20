@@ -175,9 +175,17 @@ If you are now connected to the primary, a `+` icon will appear!
      
 # Common Issues and Hints
 
-### 1. Pods get stuck at startup after restarting Docker 
+### 1. Pods get stuck at startup after restarting Docker or Laptop
 If you restart Docker and restart the containers, sometimes Pods can get stuck.  
-If this happens, force them to be deleted, so they are re-created:
+If this happens:
+
+#### Add the new Operator IP to Access List
+If you restart your laptop or Docker, the Operator's IP may change.  
+In this case, you need to [add the new IP](https://github.com/vinilage/mck-om/blob/main/replica-set/README.md#configuring-ops-manager-and-mck) to OpsManager's Access List.
+
+### Force deletion of the failing Pods
+If adding the IP doesn't fix the issue after few minutes, do the following.  
+Force the failing Pods to be deleted, so they are re-created:
 
 ``` 
 kubectl delete pod <pod> -n mongodb-operator --grace-period=0 --force
