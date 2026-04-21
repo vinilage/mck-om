@@ -4,7 +4,7 @@ metadata:
   name: ops-manager
   namespace: mongodb-operator
 spec:
-  version: "8.0.16"
+  version: "8.0.22"
   adminCredentials: om-admin-secret
   externalConnectivity:
     type: LoadBalancer
