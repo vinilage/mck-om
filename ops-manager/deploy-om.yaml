@@ -19,7 +19,7 @@ spec:
     mms.mail.ssl: "false"
     mms.mail.transport: smtp
   applicationDatabase:
-    members: 3
+    members: 3 # this is the minimum acceptable for AppDB 
     version: "8.2.0"
 
 ---
