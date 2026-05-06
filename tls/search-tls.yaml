@@ -4,16 +4,69 @@ metadata:
   name: replica-set # same name as the MongoDB replica-set resource to avoid specifying source.mongodbResourceRef
   namespace: mongodb-operator
 spec:
-  resourceRequirements:
-    limits:
-      cpu: "3"
-      memory: 5Gi
-    requests:
-      cpu: "2"
-      memory: 3Gi
-  ################################## TLS configuration
+  logLevel: DEBUG
+  replicas: 3 
   security:
     tls:
       certificateKeySecretRef:
-        name: mdb-rs-search-tls # search TLS secret
-      # CA is inherited from the replica-set: mdb-rs-ca-configmap
+        name: mdb-rs-search-tls
+      # If you’re following the doc’s pattern with cert-manager + prefix:
+      certsSecretPrefix: fts-vs  # or whatever prefix you actually configured
+      # If instead you’re using a single explicit secret:
+      # certificateKeySecretRef:
+      #   name: mdb-rs-search-tls
+  loadBalancer:
+    managed: {}  # have operator deploy/configure Envoy
+  resourceRequirements:
+    limits:
+      cpu: "2"
+      memory: 2Gi
+    requests:
+      cpu: "1"
+      memory: 1Gi
+
+---
+
+# LB server certificate
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: fts-vs-replica-set-search-lb-0-cert
+  namespace: mongodb-operator
+spec:
+  secretName: fts-vs-replica-set-search-lb-0-cert  # because I am using the prefix fts-vs and "replica-set"
+  duration: 8760h # 1 year
+  renewBefore: 720h # 30 days
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  usages:
+    - server auth
+  dnsNames:
+    - "*.mdb.svc.cluster.local"
+  issuerRef:
+    name: my-ca-issuer
+    kind: ClusterIssuer
+
+---
+
+# LB client certificate
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: fts-vs-replica-set-search-lb-0-client-cert
+  namespace: mongodb-operator
+spec:
+  secretName: fts-vs-replica-set-search-lb-0-client-cert   # because I am using the prefix fts-vs and "replica-set"
+  duration: 8760h # 1 year
+  renewBefore: 720h # 30 days
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  usages:
+    - client auth
+  dnsNames:
+    - "*.mdb.svc.cluster.local"
+  issuerRef:
+    name: my-ca-issuer
+    kind: ClusterIssuer
