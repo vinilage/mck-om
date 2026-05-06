@@ -74,7 +74,7 @@ kubectl --context k3d-mongodb-mck-cluster \
   -o jsonpath="{.data['ca\\.crt']}" | base64 --decode > ca.pem
 ```
 
-#### 2. Create the ConfigMap
+#### 2. Create the ConfigMap and root-secret
 
 The following command will:  
 - create a `replica-set-ca-configmap` ConfigMap
@@ -92,6 +92,15 @@ kubectl --context "k3d-mongodb-mck-cluster" \
   --from-file=mms-ca.crt=./ca.pem \
   --from-file=ca.crt=./ca.pem \
   --dry-run=client -o yaml | kubectl --context "k3d-mongodb-mck-cluster" apply -f -
+```
+
+Now we need to create the `root-secret` in the `mongodb-operator` namespace.  
+```
+kubectl create secret generic root-secret \
+  -n mongodb-operator \
+  --context k3d-mongodb-mck-cluster \
+  --from-file=ca.crt=./ca.pem \
+  --dry-run=client -o yaml | kubectl apply -f -
 ```
 
 Confirm that the `replica-set-ca-configmap` has been created.  

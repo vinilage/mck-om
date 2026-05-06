@@ -43,7 +43,12 @@ spec:
   usages:
     - server auth
   dnsNames:
-    - "*.mdb.svc.cluster.local"
+    # This is the exact DNS name the MongoDB nodes use to find the Search LB
+    - "replica-set-search-lb-0-svc.mongodb-operator.svc.cluster.local"
+    # General wildcard for this namespace
+    - "*.mongodb-operator.svc.cluster.local"
+    # Short name for internal pod-to-pod communication
+    - "replica-set-search-lb-0-svc"
   issuerRef:
     name: my-ca-issuer
     kind: ClusterIssuer
@@ -66,7 +71,7 @@ spec:
   usages:
     - client auth
   dnsNames:
-    - "*.mdb.svc.cluster.local"
+    - "*.mongodb-operator.svc.cluster.local"
   issuerRef:
     name: my-ca-issuer
     kind: ClusterIssuer
