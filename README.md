@@ -252,6 +252,68 @@ mongosh \
   "mongodb://replica-set-0.replica-set-svc.mongodb-operator.svc.cluster.local:27017,replica-set-1.replica-set-svc.mongodb-operator.svc.cluster.local:27017,replica-set-2.replica-set-svc.mongodb-operator.svc.cluster.local:27017/?replicaSet=replica-set"
 ```
 
+### 8. Connecting always to primary (or secondary) - work in progress
+
+If the App is running inside of the Kubernetes cluster, this is simple.  
+Use `readPreference` in the connection string.  
+
+For writing operations, connect to the primary:
+```
+mongodb://mdb-admin:12345678@replica-set-svc.mongodb-operator.svc.cluster.local:27017/?replicaSet=replica-set&authSource=admin&readPreference=primary
+```
+
+For read-only operations, prefer the secondary:  
+```
+mongodb://mdb-admin:12345678@replica-set-svc.mongodb-operator.svc.cluster.local:27017/?replicaSet=replica-set&authSource=admin&readPreference=secondaryPreferred
+```
+or allow any (driver default):
+``` 
+mongodb://mdb-admin:12345678@replica-set-svc.mongodb-operator.svc.cluster.local:27017/?replicaSet=replica-set&authSource=admin
+```
+
+If the App is running outside of the Kube cluster, you need to port-forward each of the pods.  
+Horizons also need to be applied, in order that external Apps can use the correct DNS.  
+
+Horizons let each replica set member advertise different host:port addresses for different client “views” (horizons), so that:
+
+- Inside Kubernetes, members use internal *.svc.cluster.local addresses.
+- Outside Kubernetes, clients see external addresses you define in spec.connectivity.replicaSetHorizons (e.g. web1.example.com:30907), which are actually reachable from those clients.
+
+Apply `replica-set-tls-horizons.yaml`.  
+Run each of the port-forwards in a different terminal
+
+```
+# terminal 1
+kubectl port-forward -n mongodb-operator pod/replica-set-0 27017:27017
+```
+```
+# terminal 2
+kubectl port-forward -n mongodb-operator pod/replica-set-1 27018:27017
+```
+```
+# terminal 3
+kubectl port-forward -n mongodb-operator pod/replica-set-2 27019:27017
+```
+And finally the connection string using all the 3 different ports.  
+The driver will then find-out the primary, and connect to it:  
+```
+mongodb://mdb-admin:12345678@localhost:27017,localhost:27018,localhost:27019/?replicaSet=replica-set&authSource=admin&readPreference=primary
+```
+
+#### 8.2. App outside of the Kubernetes cluster
+
+You need some way to reach the service from outside: typically port-forward (for local dev) or an external Service/Ingress (for real deployments).  
+
+8.2.1. 
+
+### 9. Search FTDC (Full Time Diagnostic Data Capture)
+
+Search FTDC is persistently stored in `/mongot/data/diagnostic.data`.  
+To copy the data from the Kubernetes cluster to a local directory:  
+```
+kubectl cp -n mongodb-operator \
+  replica-set-search-0:/mongot/data/diagnostic.data ./mongot-diagnostic.data
+```
 
 ## References
 
