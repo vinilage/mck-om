@@ -1,6 +1,6 @@
-# Enable SCRUM and create MongoDB database users
+# Enable SCRAM and create MongoDB database users
 What we will do:
-- Enable SCRUM authentication in the replica-set deployment
+- Enable SCRAM authentication in the replica-set deployment
 - Create 3 users to secure the access to the database.
 - Cretae 3 Kubernetes secrets with the user passwords. 
 
@@ -12,7 +12,7 @@ The passwords are by default `12345678` and the secrets are created to store the
 - `mdb-user` read and write access only to the `sample_mflix` database, for Vector Search.
 - `search-sync-source` mandatory for Search, used between `mongot`  and `mongod`.
 
-### Enable SCRUM Authentication in replica-set
+### Enable SCRAM Authentication in replica-set
 Go to the folder `./user/` and run:
 ```
 kubectl apply -f replica-set-auth.yaml

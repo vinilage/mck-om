@@ -5,7 +5,7 @@ If you've followed [these steps](https://github.com/vinilage/mck-om/tree/main) y
 - [A local Kubernetes cluster](https://github.com/vinilage/mck-om/tree/main) 
 - [OpsManager deployed](https://github.com/vinilage/mck-om/tree/main)
 - [A replica-set deployed](https://github.com/vinilage/mck-om/blob/main/replica-set/README.md) 
-- [SCRUM authentication enabled and database users created](https://github.com/vinilage/mck-om/blob/main/user/README.md)
+- [SCRAM authentication enabled and database users created](https://github.com/vinilage/mck-om/blob/main/user/README.md)
 - [TLS is enabled](https://github.com/vinilage/mck-om/blob/main/tls/README.md)
 
 ## Import sample data to the local database
