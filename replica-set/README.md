@@ -65,7 +65,7 @@ You will see something like this:
 ![Alt text](/img/compass.png)
 
 ## Continue
-- [Enable SCRUM and create database users](https://github.com/vinilage/mck-om/blob/main/user/README.md)
+- [Enable SCRAM and create database users](https://github.com/vinilage/mck-om/blob/main/user/README.md)
 - [Deploy Search & Vector Search](https://github.com/vinilage/mck-om/blob/main/search/README.md)
 
 ## References
