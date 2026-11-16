@@ -7,7 +7,7 @@ metadata:
 spec:
   type: ReplicaSet
   members: 3
-  version: "8.3.3-ent"
+  version: "9.0.8-ent"
   persistent: true
   # OpsManager Config
   opsManager:
@@ -25,5 +25,5 @@ spec:
     certsSecretPrefix: certs
     ################################## TLS configuration
     tls:
-      enabled: true
+      enabled: false
       ca: replica-set-ca-configmap # ConfigMap with CA PEM
