@@ -4,7 +4,7 @@ metadata:
   name: ops-manager
   namespace: mongodb-operator
 spec:
-  version: "8.0.25"
+  version: "9.0.2"
   adminCredentials: om-admin-secret
   externalConnectivity:
     type: LoadBalancer
@@ -22,7 +22,7 @@ spec:
     enabled: false # Dissable backup for now
   applicationDatabase:
     members: 3 # this is the minimum acceptable for AppDB
-    version: "8.3.3"
+    version: "9.0.8"
 
 ---
 # This is a Global Owner User used basically only for the initial setup of Ops Manager.
