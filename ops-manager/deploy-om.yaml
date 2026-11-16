@@ -18,6 +18,8 @@ spec:
     mms.mail.port: "466"
     mms.mail.ssl: "false"
     mms.mail.transport: smtp
+  backup:
+    enabled: false # Dissable backup for now
   applicationDatabase:
     members: 3 # this is the minimum acceptable for AppDB
     version: "8.3.3"
